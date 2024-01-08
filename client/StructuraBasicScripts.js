@@ -23,9 +23,11 @@ function load(){
 		case "#Redstone":
 		case "#Statues":
 		case "#Misc":
+			hideMain();
 			loadGrid(window.location.hash,"none");
 			break;
 		case "":
+			hideMain();
 			loadGrid("default","none");
 			break;
 		case "#login":
@@ -33,7 +35,9 @@ function load(){
 			break;
 		case "#signup":
 			loadSignup();
-			console.log("signup")
+			break;
+		case "#profile":
+			loadUserProfilePage();
 			break;
 		default:
 			processHash(window.location.hash);
@@ -41,8 +45,6 @@ function load(){
 	}
 }
 function processHash(hash){
-	hideMain()
-	
 	let hashArray = hash.split("#");
 	switch(hashArray[1]){
 		case "item":
@@ -121,7 +123,6 @@ function loadGrid(page_value,filter_value){
 	})
 	.then(response => response.json())
 	.then(response => {
-		console.log(response);
 		setupGrid(response["items"])
 	})
 }
@@ -228,7 +229,6 @@ function materials(){
 	document.getElementById("listBlock").classList.add("show")
 }
 function showGrid(){
-	hideMain();
 	document.getElementById("grid").classList.remove("hide")
 	document.getElementById("grid").classList.add("showGrid")
 }
@@ -238,12 +238,18 @@ function showItem(){
 	document.getElementById("itemPage").classList.add("show")
 }
 function showLogin(){
+	document.getElementById("loginUser").value = "";
+	document.getElementById("loginPass").value = "";
 	hideMain();
 	document.getElementById("loginFormDiv").classList.remove("hide")
 	document.getElementById("loginFormDiv").classList.add("show")
 }
 function loadSignup(){
 	hideMain();
+	document.getElementById("user").value = "";
+	document.getElementById("pass").value = "";
+	document.getElementById("passConf").value = "";
+	document.getElementById("email").value = "";
 	document.getElementById("signupFormDiv").classList.remove("hide")
 	document.getElementById("signupFormDiv").classList.add("show")
 	
@@ -253,6 +259,11 @@ function showConfirmPage(){
 	document.getElementById("confirmDiv").classList.remove("hide")
 	document.getElementById("confirmDiv").classList.add("show")
 	
+}
+function loadUserProfilePage(){
+	hideMain()
+	document.getElementById("userProfile").classList.remove("hide")
+	document.getElementById("userProfile").classList.add("show")
 }
 
 function hideMain(){
@@ -329,13 +340,24 @@ function signUp(email, password, usr) {
 		}
 		var cognitoUser = result.user;
 		document.getElementById("emailConfirmMsg").innerHTML = "Email sent to "+email+" please  confirm email to continue."
+		document.getElementById("user").value = "";
+		document.getElementById("pass").value = "";
+		document.getElementById("passConf").value = "";
+		document.getElementById("email").value = "";
 		showConfirmPage()
 	});
 }
 
+let loginForm = document.getElementById("loginForm");
+loginForm.addEventListener("submit", (e) => {
+	e.preventDefault();
+	let usr = document.getElementById("loginUser").value;
+	let pass = document.getElementById("loginPass").value;
+	login(usr,pass);
+});
 let signupForm = document.getElementById("signupForm");
 signupForm.addEventListener("submit", (e) => {
-  e.preventDefault();
+	e.preventDefault();
 	let usr = document.getElementById("user").value;
 	let pass = document.getElementById("pass").value;
 	let passConf = document.getElementById("passConf").value;
@@ -362,17 +384,38 @@ confirmForm.addEventListener("submit", (e) => {
 		Username: username,
 		Pool: userPool,
 	}
-	var cognitoUser = new AmazonCognitoIdentity.CognitoUser(userData);
+	cognitoUser = new AmazonCognitoIdentity.CognitoUser(userData);
 	cognitoUser.confirmRegistration(confirmation, true, function(err, result) {
 		if (err) {
 			alert(err.message || JSON.stringify(err));
 			return;
 		}
-		console.log('call result: ' + result);
+		loadUserProfilePage();
 	});
 	
 });
 
+function login(usr,pass){
+	let authenticationData = {
+		Username: usr,
+		Password: pass,
+	};
+	let authenticationDetails = new AmazonCognitoIdentity.AuthenticationDetails(authenticationData);
+	let userData = {
+		Username: usr,
+		Pool: userPool,
+	};
+	cognitoUser = new AmazonCognitoIdentity.CognitoUser(userData);
+	cognitoUser.authenticateUser(authenticationDetails, {
+		onSuccess: function(result) {
+			var accessToken = result.getAccessToken().getJwtToken();
+			console.log("logged in")
+		},
+		onFailure: function(err) {
+			alert(err.message || JSON.stringify(err));
+		},
+	})
+}
 function validatePassword(pw) {
 
     return /[A-Z]/       .test(pw) &&
@@ -381,4 +424,16 @@ function validatePassword(pw) {
            /[^A-Za-z0-9]/.test(pw) &&
            pw.length > 8;
 
+}
+// profile editing
+function saveUserProfile(){
+	let youtube = document.getElementById("userProfileYoutubeInput").value;
+	let discord = document.getElementById("userProfileDiscordInput").value;
+	let patreon = document.getElementById("userProfilePatreonInput").value;
+	let kofi = document.getElementById("userProfileKoFiInput").value;
+	let twitch = document.getElementById("userProfileTwitchInput").value;
+	
+}
+function revertUserProfileChanges(){
+	
 }

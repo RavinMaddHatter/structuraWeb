@@ -4,7 +4,6 @@
 <title>Structura Lab</title>
 <script src="aws-cognito-sdk.min.js"></script>
 <script src="amazon-cognito-identity.min.js"></script>
-<script src="StructuraBasicScripts.js"></script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel = "stylesheet" href="StructuraStyle.css">
@@ -17,6 +16,9 @@
   </div>
   <div class="headLinks hide" id="profLink">
     <a href="#profile" >Profile</a>
+  </div>
+  <div class="headLinks hide" id="profLink">
+    <a href="#signout" >Sign Out</a>
   </div>
   <p>Your place for discovering what is possible in Minecraft Bedrock </p>
   
@@ -85,17 +87,17 @@
   </div>
 
   
-<!-->  Login And Account Management Stuff  <-->
+<!--  Login And Account Management Stuff  -->
   <div class="LoginForm main" id="loginFormDiv">
 	<div class="LoginForm__title">Login</div>
-	  <form class="LoginForm__form">
+	  <form class="LoginForm__form" id = "loginForm">
 		 <div class="Control">
 		    <label class="Control__label" for="user">User</label>
-		    <input class="Control__input" name="user" type="text" placeholder="User" />
+		    <input class="Control__input" type="text" placeholder="User" id="loginUser"/>
 		  </div>
 		  <div>
 			<label class="Control__label" for="password">Password</label>
-			<input class="Control__input" name="password" type="password" placeholder="Password" />
+			<input class="Control__input" type="password" placeholder="Password" id="loginPass"/>
 		  </div>
 		  <div class= "buttonHolder">
 		  <input class="Control__input" type="submit" value="Login" />
@@ -151,15 +153,46 @@
 	  </form>
 	</div>
 	
-<!--> User Profile <-->
+<!-- User Profile -->
   <div class="userProfile main hide" id="userProfile">
-	
+	<div id="userProfileIconDiv">
+		<img id="userProfileIcon"></img>
+	</div>
+	<div id="userProfileYoutube">
+		<span>Youtube</span>
+		<input type="url" id="userProfileYoutubeInput" placeholder="Link to Youtube Channel"></input>
+		<p>Will show up when user clicks your profile.</p>
+	</div>
+	<div id="userProfileDiscord">
+		<span>Discord</span>
+		<input type="url" id="userProfileDiscordInput" placeholder="Discord Invite Link"></input>
+		<p>Will show up when user clicks your profile.</p>
+	</div>
+	<div id="userProfilePatreon">
+		<span>Patreon</span>
+		<input type="url" id="userProfilePatreonInput" placeholder="Link to Patreon Pange"></input>
+		<p>Will show up when user clicks your profile and will appear under "support this creator" for each structure</p>
+	</div>
+	<div id="userProfileKoFi">
+		<span>Ko-Fi</span>
+		<input type="url" id="userProfileKoFiInput" placeholder="Link to Ko-Fi Page"></input>
+		<p>Will show up when user clicks your profile and will appear under "support this creator" for each structure</p>
+	</div>
+	<div id="userProfileTwitch">
+		<span>Twitch</span>
+		<input type="url" id="userProfileTwitchInput" placeholder="Link to Twitch Channel"></input>
+		<p>Will show up when user clicks your profile.</p>
+	</div>
+	<div id="userProfileButtons">
+		<button onclick="saveUserProfile()">Save</button>
+		<button onclick="revertUserProfileChanges()">Cancel</button>
+	</div>
   </div>
-
-<!--> Display Grid <-->
+<!-- Display Grid -->
   <div class="grid-container main hide" id="grid">
   </div>
 </div>
 </body>
+<script src="StructuraBasicScripts.js"></script>
 
 </html>
