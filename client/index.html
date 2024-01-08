@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Structura Lab</title>
+<script src="aws-cognito-sdk.min.js"></script>
+<script src="amazon-cognito-identity.min.js"></script>
+<script src="StructuraBasicScripts.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel = "stylesheet" href="StructuraStyle.css">
+</head>
+<body>
+<div class="topnav">
+  <h2>Structura</h2>
+  <div class="headLinks" id="loginLink">
+    <a href="#login" >Login</a>
+  </div>
+  <div class="headLinks hide" id="profLink">
+    <a href="#profile" >Profile</a>
+  </div>
+  <p>Your place for discovering what is possible in Minecraft Bedrock </p>
+  
+</div>
+<div class="content">
+<div class="middlenav">
+  <div class="dropdown">
+  <button onclick="clickFilter()" class="dropbtn">Category</button>
+    <div id="filter" class="dropdown-content">
+      <a href="#Farms">Farms</a>
+      <a href="#Buildings">Buildings</a>
+      <a href="#Terrain">Terrain</a>
+      <a href="#Village">Village</a>
+      <a href="#Storage">Storage</a>
+      <a href="#Flying">Flying Machines</a>
+      <a href="#Furnaces">Furnaces</a>
+      <a href="#Redstone">Redstone</a>
+      <a href="#Statues">Statues</a>
+      <a href="#Misc">Misc</a>
+    </div>
+  </div>
+  <div class="dropdown">
+  <button onclick="clickSort()" class="dropbtn">Sort By</button>
+    <div id="sort" class="dropdown-content">
+      <a href="#date">newest</a>
+      <a href="#date-old">oldest</a>
+      <a href="#popular">Most Downloaded</a>
+      <a href="#rated">Highest Rated</a>
+      <a href="#random">Random</a>
+    </div>
+  </div>
+  <div class="dropdown">
+	<button onclick="upload()" class="dropbtn">Upload</button>
+  </div>
+</div>
+
+  
+  
+  <div class="main hide" id="itemPage">
+	<div class="splash" id="splash">
+		<h1 id="itemName"></h1>
+		<div class="gallery" id="gallery">
+			<img class="itemImg" id="itemImg">
+		</div>
+		<div class="brief" id="brief">
+			<h3>Creator</h3>
+			<a class="itemProfile" id="itemProfile"></a>
+			<h3>Date added</h3>
+			<div id="itemDate",class="itemDate"></div>
+			<h3>Structure file</h3>
+			<a class="itemStructure" id="itemStructure">download .mcstructure file</a>
+		</div>
+	</div>
+
+	<div class="detailsContainer" id="details">
+		<div class="details" id="descriptionBlock">
+			<h3>Description</h3>
+			<div id="description"></div>
+		</div>
+		<div class="details" id="listBlock">
+			<h3>Materials List</h3>
+			<div class="materialsGrid" id="materialsList">
+			</div>
+		</div>
+	</div>
+  </div>
+
+  
+<!-->  Login And Account Management Stuff  <-->
+  <div class="LoginForm main" id="loginFormDiv">
+	<div class="LoginForm__title">Login</div>
+	  <form class="LoginForm__form">
+		 <div class="Control">
+		    <label class="Control__label" for="user">User</label>
+		    <input class="Control__input" name="user" type="text" placeholder="User" />
+		  </div>
+		  <div>
+			<label class="Control__label" for="password">Password</label>
+			<input class="Control__input" name="password" type="password" placeholder="Password" />
+		  </div>
+		  <div class= "buttonHolder">
+		  <input class="Control__input" type="submit" value="Login" />
+		  </div>
+		</form>
+		<div>
+		  <a href="#signup">Sign Up</a>
+		</div>
+		<div>
+		<a href="#restpass">Forgot password</a>
+		</div>
+	</div>
+
+
+	<div class="LoginForm main hide" id="signupFormDiv">
+	  <h3 class="LoginForm__title">Sign up</h3>
+	  <form class="LoginForm__form" id = "signupForm">
+		<div class="Control">
+		  <label class="Control__label" for="user">User</label>
+		  <input class="Control__input" id="user" type="text" placeholder="User" id = "user"/>
+		</div>
+		<div>
+		  <label class="Control__label" for="email">Email Address</label>
+		  <input class="Control__input" name="email" type="email" placeholder="Email" id="email"/>
+		</div>
+		<div>
+		  <label class="Control__label" for="password">Password</label>
+		  <input class="Control__input" name="password" type="password" placeholder="Password" id="pass"/>
+		</div>
+		<div>
+		  <label class="Control__label" for="passConf">Confirm Password</label>
+		  <input class="Control__input" name="passConf" type="password" placeholder="Password" id="passConf"/>
+		</div>
+		<div id="problems"></div>
+		<div class= "buttonHolder">
+		  <input class="control__submit" type="submit" value="Submit" />
+		</div>
+	  </form>
+	</div>
+	<div class="LoginForm main hide" id="confirmDiv">
+	  <h3 class="LoginForm__title">Confirm Email</h3>
+	  <div id="emailConfirmMsg"></div>
+	  <form class="LoginForm__form" id = "confirmForm">
+		<div class="Control">
+		  <label class="Control__label" for="confirmation">Confirmation</label>
+		  <input class="Control__input" type="text" placeholder="number" id = "conf"/>
+		</div>
+		<div id="problems"></div>
+		<div class= "buttonHolder">
+		  <input class="control__submit" type="submit" value="Submit" />
+		  <input class="control__submit" type="submit" value="Resend" />
+		</div>
+	  </form>
+	</div>
+	
+<!--> User Profile <-->
+  <div class="userProfile main hide" id="userProfile">
+	
+  </div>
+
+<!--> Display Grid <-->
+  <div class="grid-container main hide" id="grid">
+  </div>
+</div>
+</body>
+
+</html>

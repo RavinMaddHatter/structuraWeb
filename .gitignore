@@ -1,0 +1,4 @@
+
+client/amazon-cognito-identity.js
+client/amazon-cognito-identity.min.js
+client/aws-cognito-sdk.min.js
