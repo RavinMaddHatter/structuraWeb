@@ -311,4 +311,9 @@ background-color: #ddd;
 	display:inline-block;
 	width:150px;
 }
+.userProfile{
+	width:90%;
+	margin-left: auto;
+    margin-right: auto;
+}
 

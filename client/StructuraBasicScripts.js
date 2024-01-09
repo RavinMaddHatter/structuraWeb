@@ -2,16 +2,26 @@
 apiUrl="https://9gfs7b30ea.execute-api.us-east-2.amazonaws.com/default/structurawebpage";
 page = 0;
 var cachedItems = {}
+var poolData = {
+	UserPoolId: 'us-east-2_F8JCwtZAa', // Your user pool id here
+	ClientId: 'tese5jomgf225lrvescg5o96l', // Your client id here
+};
+var userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
+var username = ""
+var cognitoUser = ""
+var credentials = null;
+// check if user is logged in
+checkLogin();
 
 
-
+// begin loading website
 load();
 window.onhashchange = function(){
 	load()
 }
 
 function load(){
-	clearGrid()
+	clearGrid();
 	switch(window.location.hash){
 		case "#Farms":
 		case "#Buildings":
@@ -23,9 +33,19 @@ function load(){
 		case "#Redstone":
 		case "#Statues":
 		case "#Misc":
+		case "#data":
+		case "#date-old":
+		case "#popular":
+		case "#rated":
+		case "#random":
 			hideMain();
 			loadGrid(window.location.hash,"none");
 			break;
+		case "#restpass":
+			alert("Not implemented")
+			window.location.hash = ""
+			break;
+		case "#":
 		case "":
 			hideMain();
 			loadGrid("default","none");
@@ -38,6 +58,9 @@ function load(){
 			break;
 		case "#profile":
 			loadUserProfilePage();
+			break;
+		case "#signout":
+			signOut();
 			break;
 		default:
 			processHash(window.location.hash);
@@ -111,7 +134,7 @@ function clearMaterialsList(){
 	}
 }
 function makeProfilePage(profile){
-	
+	alert("Not implemented")
 }
 
 
@@ -215,9 +238,17 @@ function clickSort() {
 	document.getElementById("sort").classList.add("show");
   }
 }
-function upload(){
+function uploadButton(){
 	window.location.hash = '#upload';
 }
+function showUpload(){
+	if(credentials=null){
+		window.location.hash = '#login';
+		showLogin();
+	}
+	alert("Not implemented")
+}
+
 
 
 function description(){
@@ -261,6 +292,10 @@ function showConfirmPage(){
 	
 }
 function loadUserProfilePage(){
+	if (credentials==null){
+		showLogin();
+		return
+	}
 	hideMain()
 	document.getElementById("userProfile").classList.remove("hide")
 	document.getElementById("userProfile").classList.add("show")
@@ -314,13 +349,32 @@ window.onclick = function(event) {
 
 //login stuff
 
-  var poolData = {
-	UserPoolId: 'us-east-2_F8JCwtZAa', // Your user pool id here
-	ClientId: 'tese5jomgf225lrvescg5o96l', // Your client id here
-};
-var userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
-var username = ""
-var cognitoUser = ""
+
+
+function checkLogin(){
+	var cognitoUser = userPool.getCurrentUser();
+	
+	if(cognitoUser==null){
+		document.getElementById("signOutButton").classList.remove("show")
+		document.getElementById("signOutButton").classList.add("hide")
+		document.getElementById("profLink").classList.remove("show")
+		document.getElementById("profLink").classList.add("hide")
+		document.getElementById("loginLink").classList.remove("hide")
+		document.getElementById("loginLink").classList.add("show")
+		credentials=null;
+		return
+	}
+	credentials={}
+	credentials.user = cognitoUser;
+	username = cognitoUser.username
+	cognitoUser = cognitoUser
+	document.getElementById("signOutButton").classList.add("show")
+	document.getElementById("signOutButton").classList.remove("hide")
+	document.getElementById("profLink").classList.add("show")
+	document.getElementById("profLink").classList.remove("hide")
+	document.getElementById("loginLink").classList.add("hide")
+	document.getElementById("loginLink").classList.remove("show")
+}
 function signUp(email, password, usr) {
 	let attributeList=[];
 	let dataEmail={
@@ -347,6 +401,32 @@ function signUp(email, password, usr) {
 		showConfirmPage()
 	});
 }
+
+let changePassForm = document.getElementById("changePasswordForm");
+changePassForm.addEventListener("submit", (e) => {
+	e.preventDefault();
+	let oldpass = document.getElementById("oldPass").value;
+	let pass = document.getElementById("changePass").value;
+	let passConf = document.getElementById("changePassConf").value;
+	if(!validatePassword(pass)){
+		document.getElementById("changeProblems").innerHTML = "Password must be atleast 8 charaters and contain: upper case, lower case, number and special character"
+		return
+	}
+	if(pass!=passConf){
+		document.getElementById("changeProblems").innerHTML = "Password and confirmation must match"
+		return
+	}
+	document.getElementById("changeProblems").innerHTML = ""
+	document.getElementById("changePass").value = "";
+	document.getElementById("changePassConf").value = "";
+	credentials.user.changePassword(oldpass,pass,function(err,result){
+		if (err) {
+			alert(err.message || JSON.stringify(err));
+			return;
+		}
+		window.location.hash = '#profile';
+	})
+});
 
 let loginForm = document.getElementById("loginForm");
 loginForm.addEventListener("submit", (e) => {
@@ -377,7 +457,6 @@ signupForm.addEventListener("submit", (e) => {
 
 let confirmForm = document.getElementById("confirmForm");
 confirmForm.addEventListener("submit", (e) => {
-	console.log("sumbitted")
   e.preventDefault();
 	let confirmation = document.getElementById("conf").value;
 	let userData = {
@@ -390,10 +469,14 @@ confirmForm.addEventListener("submit", (e) => {
 			alert(err.message || JSON.stringify(err));
 			return;
 		}
-		loadUserProfilePage();
+		window.location.hash = '#profile';
 	});
 	
 });
+function signOut(){
+	credentials.user.signOut()
+	window.location.hash = '#login';
+}
 
 function login(usr,pass){
 	let authenticationData = {
@@ -409,11 +492,15 @@ function login(usr,pass){
 	cognitoUser.authenticateUser(authenticationDetails, {
 		onSuccess: function(result) {
 			var accessToken = result.getAccessToken().getJwtToken();
-			console.log("logged in")
+			credentials={}
+			credentials.accessToken = result.getAccessToken().getJwtToken();
+			credentials.user=cognitoUser;
+			window.location.hash = '#profile';
 		},
 		onFailure: function(err) {
 			alert(err.message || JSON.stringify(err));
 		},
+		
 	})
 }
 function validatePassword(pw) {
@@ -432,8 +519,10 @@ function saveUserProfile(){
 	let patreon = document.getElementById("userProfilePatreonInput").value;
 	let kofi = document.getElementById("userProfileKoFiInput").value;
 	let twitch = document.getElementById("userProfileTwitchInput").value;
+	alert("Not implemented")
 	
 }
 function revertUserProfileChanges(){
+	alert("Not implemented")
 	
 }

@@ -2,22 +2,22 @@
 <html lang="en">
 <head>
 <title>Structura Lab</title>
-<script src="aws-cognito-sdk.min.js"></script>
-<script src="amazon-cognito-identity.min.js"></script>
+<script src="https://s3.us-east-2.amazonaws.com/structuralab.com/aws-cognito-sdk.min.js"></script>
+<script src="https://s3.us-east-2.amazonaws.com/structuralab.com/amazon-cognito-identity.min.js"></script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel = "stylesheet" href="StructuraStyle.css">
+<link rel = "stylesheet" href="https://s3.us-east-2.amazonaws.com/structuralab.com/StructuraStyle.css">
 </head>
 <body>
 <div class="topnav">
   <h2>Structura</h2>
-  <div class="headLinks" id="loginLink">
+  <div class="headLinks show" id="loginLink">
     <a href="#login" >Login</a>
   </div>
   <div class="headLinks hide" id="profLink">
     <a href="#profile" >Profile</a>
   </div>
-  <div class="headLinks hide" id="profLink">
+  <div class="headLinks hide" id="signOutButton">
     <a href="#signout" >Sign Out</a>
   </div>
   <p>Your place for discovering what is possible in Minecraft Bedrock </p>
@@ -51,7 +51,7 @@
     </div>
   </div>
   <div class="dropdown">
-	<button onclick="upload()" class="dropbtn">Upload</button>
+	<button onclick="showUpload()" class="dropbtn">Upload</button>
   </div>
 </div>
 
@@ -88,7 +88,29 @@
 
   
 <!--  Login And Account Management Stuff  -->
-  <div class="LoginForm main" id="loginFormDiv">
+  <div class="LoginForm main hide" id="changePassword">
+	<div class="LoginForm__title">Change Password</div>
+	  <form class="LoginForm__form" id = "changePasswordForm">
+		<div>
+		  <label class="Control__label" for="password">Old Password</label>
+		  <input class="Control__input" name="password" type="password" placeholder="Password" id="oldPass"/>
+		</div>
+		<div>
+		  <label class="Control__label" for="password">New Password</label>
+		  <input class="Control__input" name="password" type="password" placeholder="Password" id="changePass"/>
+		</div>
+		<div>
+		  <label class="Control__label" for="passConf">Confirm New Password</label>
+		  <input class="Control__input" name="passConf" type="password" placeholder="Password" id="changePassConf"/>
+		</div>
+		<div id="changeProblems"></div>
+		<div class= "buttonHolder">
+		  <input class="Control__input" type="submit" value="Login" />
+		  </div>
+		</form>
+  </div>
+	
+  <div class="LoginForm main hide" id="loginFormDiv">
 	<div class="LoginForm__title">Login</div>
 	  <form class="LoginForm__form" id = "loginForm">
 		 <div class="Control">
@@ -188,6 +210,7 @@
 		<button onclick="revertUserProfileChanges()">Cancel</button>
 	</div>
   </div>
+
 <!-- Display Grid -->
   <div class="grid-container main hide" id="grid">
   </div>
