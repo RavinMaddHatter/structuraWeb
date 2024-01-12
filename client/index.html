@@ -4,13 +4,14 @@
 <title>Structura Lab</title>
 <script src="https://s3.us-east-2.amazonaws.com/structuralab.com/aws-cognito-sdk.min.js"></script>
 <script src="https://s3.us-east-2.amazonaws.com/structuralab.com/amazon-cognito-identity.min.js"></script>
+<script src="https://sdk.amazonaws.com/js/aws-sdk-2.1.24.min.js"></script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel = "stylesheet" href="https://s3.us-east-2.amazonaws.com/structuralab.com/StructuraStyle.css">
+<link rel = "stylesheet" href="StructuraStyle.css">
 </head>
 <body>
 <div class="topnav">
-  <h2>Structura</h2>
+  <h2>Structura Lab</h2>
   <div class="headLinks show" id="loginLink">
     <a href="#login" >Login</a>
   </div>
@@ -51,7 +52,7 @@
     </div>
   </div>
   <div class="dropdown">
-	<button onclick="showUpload()" class="dropbtn">Upload</button>
+	<button onclick="uploadButton()" class="dropbtn">Upload</button>
   </div>
 </div>
 
@@ -85,7 +86,19 @@
 		</div>
 	</div>
   </div>
-
+  
+<!-- upload forms-->
+  <div class="main hide" id="uploadStep1">
+	<h3 class="uploadStepTitle">Sumbit .mcstructure file</h3>
+	<div>        
+      <input type="file" id="fileUpload" multiple>    
+    </div>    
+	<div class="uploadExplanationStep">Please upload a .mcstructure file exported from minecraft bedrock edition. The file must contain data (a bug in minecraft/onedrive some times makes empty files)</div>
+    <div> 
+      <button onclick="uploadMcstructure()">Submit</button>    
+    </div> 
+	<!--<progress max=”100” value=”0”></progress> -->
+  </div>
   
 <!--  Login And Account Management Stuff  -->
   <div class="LoginForm main hide" id="changePassword">

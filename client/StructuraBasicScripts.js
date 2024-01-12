@@ -1,5 +1,6 @@
 
 apiUrl="https://9gfs7b30ea.execute-api.us-east-2.amazonaws.com/default/structurawebpage";
+signingApi = "https://9n9zr2dyn8.execute-api.us-east-2.amazonaws.com/default/structuralabSigner"
 page = 0;
 var cachedItems = {}
 var poolData = {
@@ -7,9 +8,9 @@ var poolData = {
 	ClientId: 'tese5jomgf225lrvescg5o96l', // Your client id here
 };
 var userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
-var username = ""
-var cognitoUser = ""
 var credentials = null;
+var fileUploadObjects={}
+var previousPage=""
 // check if user is logged in
 checkLogin();
 
@@ -38,6 +39,7 @@ function load(){
 		case "#popular":
 		case "#rated":
 		case "#random":
+			previousPage=window.location.hash
 			hideMain();
 			loadGrid(window.location.hash,"none");
 			break;
@@ -57,12 +59,18 @@ function load(){
 			loadSignup();
 			break;
 		case "#profile":
+			previousPage=window.location.hash
 			loadUserProfilePage();
 			break;
 		case "#signout":
 			signOut();
 			break;
+		case "#upload":
+			previousPage=window.location.hash
+			showUpload();
+			break;
 		default:
+			previousPage=""
 			processHash(window.location.hash);
 			break;
 	}
@@ -239,14 +247,65 @@ function clickSort() {
   }
 }
 function uploadButton(){
-	window.location.hash = '#upload';
+	
+	if(cognitoUser){
+		window.location.hash = '#upload';
+		return
+	}
+	window.location.hash = '#login';
 }
 function showUpload(){
 	if(credentials=null){
 		window.location.hash = '#login';
 		showLogin();
 	}
-	alert("Not implemented")
+	hideMain();
+	document.getElementById("uploadStep1").classList.remove("hide")
+	document.getElementById("uploadStep1").classList.add("show")
+	
+}
+
+function uploadMcstructure(){
+	let files = document.getElementById('fileUpload').files;
+	if(files){
+		fileUploadObjects={}
+		Array.from(files).forEach(file => {
+			let validFile=true;
+			let fileName = file.name;
+			let fileSize = file.size;
+			if(!fileName.includes(".mcstructure")){
+				alert(fileName+" is not a .mcstructure file")
+				validFile=false
+			}
+			if(fileSize==0){
+				alert(fileName+" is an empty file.")
+				validFile=false
+			}
+			if(validFile){
+				let uploadObject={}
+				uploadObject.Body=file
+				uploadObject.ACL="public-read"
+				fileUploadObjects[fileName]=uploadObject
+			}
+		});
+		getToken(signFiles)
+	}
+}
+
+
+function signFiles(token){
+	getSignedS3Urls(uploadFiles,Object.keys(fileUploadObjects),token)
+}
+function uploadFiles(signedURLs){
+	fileUploadObjects
+	console.log(signedURLs)
+	console.log(typeof signedURLs)
+	for (const fileName in signedURLs){
+		console.log(fileName)
+		console.log(signedURLs[fileName])
+		console.log(fileUploadObjects[fileName])
+	}
+	alert("got presigned keys. File upload not implemented yet")
 }
 
 
@@ -299,6 +358,18 @@ function loadUserProfilePage(){
 	hideMain()
 	document.getElementById("userProfile").classList.remove("hide")
 	document.getElementById("userProfile").classList.add("show")
+	fetch(apiUrl, {
+		method: 'POST',
+		headers: {page:"profile",filter:credentials.user.username}
+	})
+	.then(response => response.json())
+	.then(response => {
+		document.getElementById("userProfileYoutubeInput").value = response["Youtube"];
+		document.getElementById("userProfileDiscordInput").value = response["Discord"];
+		document.getElementById("userProfilePatreonInput").value = response["Paetron"];
+		document.getElementById("userProfileKoFiInput").value = response["Ko-Fi"];
+		document.getElementById("userProfileTwitchInput").value = response["Twitch"];
+	})
 }
 
 function hideMain(){
@@ -349,10 +420,27 @@ window.onclick = function(event) {
 
 //login stuff
 
-
+function getToken(callback){
+	var session=cognitoUser.getSession(function(e,r) {
+		if(e){
+			alert(e.message||JSON.strigify(e))
+		}
+		callback(r.getAccessToken().getJwtToken())
+	})
+}
+function getSignedS3Urls(callback,fileNameList,jwtoken){
+	fetch(apiUrl, {
+		method: 'POST',
+		headers: {page:"upload1",filter:"None",token:jwtoken,files:fileNameList}
+	})
+	.then(response => response.json())
+	.then(response => {
+		callback(response)
+	})
+}
 
 function checkLogin(){
-	var cognitoUser = userPool.getCurrentUser();
+	cognitoUser = userPool.getCurrentUser();
 	
 	if(cognitoUser==null){
 		document.getElementById("signOutButton").classList.remove("show")
@@ -367,13 +455,17 @@ function checkLogin(){
 	credentials={}
 	credentials.user = cognitoUser;
 	username = cognitoUser.username
-	cognitoUser = cognitoUser
 	document.getElementById("signOutButton").classList.add("show")
 	document.getElementById("signOutButton").classList.remove("hide")
 	document.getElementById("profLink").classList.add("show")
 	document.getElementById("profLink").classList.remove("hide")
 	document.getElementById("loginLink").classList.add("hide")
 	document.getElementById("loginLink").classList.remove("show")
+}
+function signOut(){
+	credentials.user.signOut()
+	checkLogin();
+	window.location.hash = '#login';
 }
 function signUp(email, password, usr) {
 	let attributeList=[];
@@ -434,6 +526,7 @@ loginForm.addEventListener("submit", (e) => {
 	let usr = document.getElementById("loginUser").value;
 	let pass = document.getElementById("loginPass").value;
 	login(usr,pass);
+	
 });
 let signupForm = document.getElementById("signupForm");
 signupForm.addEventListener("submit", (e) => {
@@ -473,10 +566,7 @@ confirmForm.addEventListener("submit", (e) => {
 	});
 	
 });
-function signOut(){
-	credentials.user.signOut()
-	window.location.hash = '#login';
-}
+
 
 function login(usr,pass){
 	let authenticationData = {
@@ -491,11 +581,8 @@ function login(usr,pass){
 	cognitoUser = new AmazonCognitoIdentity.CognitoUser(userData);
 	cognitoUser.authenticateUser(authenticationDetails, {
 		onSuccess: function(result) {
-			var accessToken = result.getAccessToken().getJwtToken();
-			credentials={}
-			credentials.accessToken = result.getAccessToken().getJwtToken();
-			credentials.user=cognitoUser;
-			window.location.hash = '#profile';
+			checkLogin()
+			window.location.hash = previousPage;
 		},
 		onFailure: function(err) {
 			alert(err.message || JSON.stringify(err));
@@ -504,23 +591,38 @@ function login(usr,pass){
 	})
 }
 function validatePassword(pw) {
-
     return /[A-Z]/       .test(pw) &&
            /[a-z]/       .test(pw) &&
            /[0-9]/       .test(pw) &&
            /[^A-Za-z0-9]/.test(pw) &&
-           pw.length > 8;
+           pw.length >= 8;
 
 }
 // profile editing
 function saveUserProfile(){
+	getToken(postUserProfile)
+}
+function postUserProfile(jwtoken){
 	let youtube = document.getElementById("userProfileYoutubeInput").value;
 	let discord = document.getElementById("userProfileDiscordInput").value;
 	let patreon = document.getElementById("userProfilePatreonInput").value;
 	let kofi = document.getElementById("userProfileKoFiInput").value;
 	let twitch = document.getElementById("userProfileTwitchInput").value;
-	alert("Not implemented")
-	
+	fetch(apiUrl, {
+		method: 'POST',
+		headers: {page:"profileupdate",filter:"None",
+			token:jwtoken,
+			youtube:youtube,
+			discord:discord,
+			patreon:patreon,
+			kofi:kofi,
+			twitch:twitch}
+	})
+	.then(response => response.json())
+	.then(response => {
+		console.log(response)
+		alert(response)
+	})	
 }
 function revertUserProfileChanges(){
 	alert("Not implemented")

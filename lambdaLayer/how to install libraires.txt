@@ -1,0 +1,5 @@
+Run the following command in the python folder
+
+
+pip install <library> -t .
+
