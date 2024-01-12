@@ -58,7 +58,7 @@ function load(){
 		case "#signup":
 			loadSignup();
 			break;
-		case "#profile":
+		case "#userprofile":
 			previousPage=window.location.hash
 			loadUserProfilePage();
 			break;
@@ -142,7 +142,26 @@ function clearMaterialsList(){
 	}
 }
 function makeProfilePage(profile){
-	alert("Not implemented")
+	hideMain()
+	document.getElementById("Profile").classList.remove("hide")
+	document.getElementById("Profile").classList.add("show")
+	fetch(apiUrl, {
+		method: 'POST',
+		headers: {page:"profile",filter:profile}
+	})
+	.then(response => response.json())
+	.then(response => {
+		document.getElementById("youtubeLink").href = response["Youtube"];
+		document.getElementById("discordLink").href = response["Discord"];
+		document.getElementById("patreonLink").href = response["Paetron"];
+		document.getElementById("kofiLink").href = response["Ko-Fi"];
+		document.getElementById("twitchLink").href = response["Twitch"];
+		document.getElementById("youtubeLink").innerHTML = response["Youtube"];
+		document.getElementById("discordLink").innerHTML = response["Discord"];
+		document.getElementById("patreonLink").innerHTML = response["Paetron"];
+		document.getElementById("kofiLink").innerHTML = response["Ko-Fi"];
+		document.getElementById("twitchLink").innerHTML = response["Twitch"];
+	})
 }
 
 
@@ -516,7 +535,7 @@ changePassForm.addEventListener("submit", (e) => {
 			alert(err.message || JSON.stringify(err));
 			return;
 		}
-		window.location.hash = '#profile';
+		window.location.hash = '#userprofile';
 	})
 });
 
@@ -562,7 +581,7 @@ confirmForm.addEventListener("submit", (e) => {
 			alert(err.message || JSON.stringify(err));
 			return;
 		}
-		window.location.hash = '#profile';
+		window.location.hash = '#userprofile';
 	});
 	
 });
