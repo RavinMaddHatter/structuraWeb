@@ -1,21 +1,98 @@
 import json
+import boto3
 import requests
 import jwt
+import uuid
+s3BucketName="structuralab.com"
 corsHeaders={'Access-Control-Allow-Headers': '*',
                 'Access-Control-Allow-Origin': '*',
                 'Access-Control-Allow-Methods': '*'
                 }
-
+ 
 def lambda_handler(event, context):
-    decoded={"json":{},"auth":False}
-    if "header" in event.keys():
-        if "Authorization" in event["header"].keys():
-            decoded=verifyToken(event["header"]["Authorization"])
+    if not("page" in event["headers"]):
+        return errorResponse("invlaid header",event)
+    page=event["headers"]["page"]
+    
+    match page:
+        case "item":
+            return getItem(event["headers"]["filter"])
+        case "upload1":
+            return getS3Sig(event["headers"]["filter"],event["headers"]["token"],event["headers"]["files"])
+        case "profileupdate":
+            return updateProfile(event["headers"])
+        case "profile":
+            try:
+                return getProfile(event["headers"]["filter"])
+            except:
+                return errorResponse("","No Profile Found")
+        case "default":
+            return getResults("")
+        case _:
+            return getResults("")
+        
+    
+def errorResponse(text,event):
+    match text:
+        case "invlaid headder":
+            resp = {
+                'statusCode': 200,
+                'headers':corsHeaders,
+                'body': json.dumps(event)}
+        case _:
+            resp = {
+                'statusCode': 200,
+                'headers':corsHeaders,
+                'body': json.dumps(event)}
+    return resp
+    
+    
+def getResults(start):
+    dynamodb = boto3.resource('dynamodb', region_name="us-east-2")
+    table = dynamodb.Table("StructuraWebsite")
+    response = table.scan(
+        FilterExpression= 'GUID > :start',
+        ExpressionAttributeValues= {':start': start}
+    )
+    
+    data = response['Items']*2
+    return  {
+        'statusCode': 200,
+        'headers':{'Access-Control-Allow-Headers': '*',
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': '*'
+                },
+        'body': json.dumps({"items":data}, default=int)
+    }
+    
+def getItem(guid):
+    dynamodb = boto3.resource('dynamodb', region_name="us-east-2")
+    table = dynamodb.Table("StructuraWebsite")
+    response = table.get_item(Key={"GUID":guid})
+    return  {
+        'statusCode': 200,
+        'headers':{'Access-Control-Allow-Headers': '*',
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': '*'
+                },
+        'body': json.dumps({"item":response['Item']}, default=int)
+    }
+def getS3Sig(filter, token, files):
+    decoded=verifyToken(token)
     if decoded["auth"]:
+        s3Client = boto3.client('s3')
+        folder=uuid.uuid4()
+        urls={}
+        if type(files) is str:
+            files=files.split(",")
+        for file in files:
+            urls[file] = s3Client.generate_presigned_url('get_object', Params = {'Bucket': s3BucketName, 'Key': f"{folder}/{file}"}, ExpiresIn = 3600)
+
+        
         retval={
             'statusCode': 200,
             'headers':corsHeaders,
-            'body': json.dumps('Hello from Lambda!')
+            'body': json.dumps(urls)
         }
     else:
         retval={
@@ -24,6 +101,7 @@ def lambda_handler(event, context):
             'body': json.dumps('Authentication Failed')
         }
     return retval
+
 def verifyToken(token):
     kidUrl="https://cognito-idp.us-east-2.amazonaws.com/us-east-2_F8JCwtZAa/.well-known/jwks.json" 
     response = requests.get(kidUrl)
@@ -44,5 +122,43 @@ def verifyToken(token):
     except:
         retVal={"json":{},"auth":False}
     return retVal
-token="eyJraWQiOiJiYmRhc2VNMFwvUlE5bmtVN2JjdktnbWhReU5BWlBMazZ0MUxHand0cHhMYz0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiIxNjg5NWFjYi02MmI0LTRiZTQtOWQwZS0zNjhmYzEzNDBlNjYiLCJpc3MiOiJodHRwczpcL1wvY29nbml0by1pZHAudXMtZWFzdC0yLmFtYXpvbmF3cy5jb21cL3VzLWVhc3QtMl9GOEpDd3RaQWEiLCJjbGllbnRfaWQiOiJ0ZXNlNWpvbWdmMjI1bHJ2ZXNjZzVvOTZsIiwib3JpZ2luX2p0aSI6ImQ0YmRiYzViLWVjOTgtNDFjOC05YmFhLWFiNmExZjZmMTg1NCIsImV2ZW50X2lkIjoiNjQ3NGRjODMtODE2Ny00YWJhLWI3ZDQtMWQ4NzRkYWIzN2EwIiwidG9rZW5fdXNlIjoiYWNjZXNzIiwic2NvcGUiOiJhd3MuY29nbml0by5zaWduaW4udXNlci5hZG1pbiIsImF1dGhfdGltZSI6MTcwNDgxMjMzOSwiZXhwIjoxNzA0OTg3MzA5LCJpYXQiOjE3MDQ5ODM3MDksImp0aSI6IjQ1ZjdmMTY3LWI1M2YtNDBiZS1hMGMzLWY3MzhkMmM3NWI5MSIsInVzZXJuYW1lIjoibWFkZGhhdHRlciJ9.KTwvYspziXEIlGCarpL_4LsUD2xYrQOuwk9Yew91uMLNM3YK2fNs9mTfw1slrBttf7_9kI9rJbfAwd5MQSsjkbcQsf2zMceXEbjsYN6BpD5g-3sCQ14PkVth_0jq8Jr_17x5drrXupQ9Vq5YXy2Tont6XnPvewtjp3t2-B8YzgLWU6E4aux63_Bx1qRPcDxRef5Zu1F4-_UiiBm_ggQHHWEotCL84Qf2BGALoyuUuarcotdJ2pM8qZNfUMCoJSd0qlqEIkngl9grtYt8V9tg94wlnvy_iKPoJQry8Z_OOXr2V3K-ljUxiNHV7m7hLM1CdyqKe7QfHJIojjkh9BVA9w"
-lambda_handler({"header":{"Authorization":token}},{})
+    
+def updateProfile(headders):
+    decoded=verifyToken(headders["token"])
+    if decoded["auth"]:
+        dynamodb = boto3.resource('dynamodb')
+        table = dynamodb.Table('webProfiles')
+        table.put_item(
+            Item={
+                'name': decoded["json"]["username"],
+                'Discord': headders["discord"],
+                'Ko-Fi': headders["kofi"],
+                'Paetron': headders["patreon"],
+                'Twitch': headders["twitch"],
+                "Youtube":headders["youtube"]
+            })
+        retval={
+            'statusCode': 200,
+            'headers':corsHeaders,
+            'body': json.dumps("Update Sucessfull!")
+            }
+    else:
+        retval={
+            'statusCode': 401,
+            'headers':corsHeaders,
+            'body': json.dumps('Authentication Failed')
+        }
+    return retval
+def getProfile(userName):
+    dynamodb = boto3.resource('dynamodb')
+    table = dynamodb.Table('webProfiles')
+    response = table.get_item(
+        Key={
+            'name': userName
+        })
+    retval={
+            'statusCode': 200,
+            'headers':corsHeaders,
+            'body': json.dumps(response['Item'], default=int)
+        }
+    return retval
