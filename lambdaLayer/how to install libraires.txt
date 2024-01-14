@@ -3,3 +3,5 @@ Run the following command in the python folder
 
 pip install <library> -t .
 
+If on windows or mac run :
+pip install --platform manylinux2014_x86_64 --target . --implementation cp --python-version 3.12 --only-binary=:all: --upgrade <library>

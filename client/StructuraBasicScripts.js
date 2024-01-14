@@ -1,7 +1,7 @@
 
 apiUrl="https://9gfs7b30ea.execute-api.us-east-2.amazonaws.com/default/structurawebpage";
 signingApi = "https://9n9zr2dyn8.execute-api.us-east-2.amazonaws.com/default/structuralabSigner"
-page = 0;
+var pagenum = 0;
 var cachedItems = {}
 var poolData = {
 	UserPoolId: 'us-east-2_F8JCwtZAa', // Your user pool id here
@@ -13,6 +13,9 @@ var fileUploadObjects={}
 var previousPage=""
 // check if user is logged in
 checkLogin();
+var metaTitle = document.getElementById("metaTitle").innerHTML
+var Description = document.getElementById("metaDescription")
+const defaultDescription = "Community site for Minecraft Bedrock users. Discover and share Minecraft Bedrock tutorials, builds, redstone, decorations and more."
 
 
 // begin loading website
@@ -23,17 +26,38 @@ window.onhashchange = function(){
 
 function load(){
 	clearGrid();
+	pagenum=0;
 	switch(window.location.hash){
 		case "#Farms":
+			metaTitle = "Structura Lab: Farms"
+			Description.setAttribute("content","A collection of Minecraft Bedrock Farm Structura files. Browse for your favorite farms.")
 		case "#Buildings":
+			metaTitle = "Structura Lab: Buildings"
+			Description.setAttribute("content","A collection of Minecraft Bedrock Builiding Structura Files. Browse for your favorite Building Designs.")
 		case "#Terrain":
-		case "#Village":
+			metaTitle = "Structura Lab: Terrain/Terraforming"
+			Description.setAttribute("content","A collection of Terraforming Structura files. Browse what others have done in their worlds")
+		case "#Villager":
+			metaTitle = "Structura Lab: Villager Tech"
+			Description.setAttribute("content","A collection of Villager bases Structura files. ")
 		case "#Storage":
+			metaTitle = "Structura Lab: Storage Systems"
+			Description.setAttribute("content","A collection of Item storage solutions for Minecraft Bedrock. Browses for your favorite Structura files.")
 		case "#Flying":
+			metaTitle = "Structura Lab: Flying Machines"
+			Description.setAttribute("content","A collection of Flying Machine Structura Files for Minecraft Bedrock Edition.")
 		case "#Furnaces":
+			metaTitle = "Structura Lab: Furnaces/Smelting Tech"
+			Description.setAttribute("content","A collection of Smelter Super Smelters, or other furnace tech for Minecraft Bedrock Edition.")
 		case "#Redstone":
+			metaTitle = "Structura Lab: Redstone Stuff"
+			Description.setAttribute("content","A collection of Redstone Structura Files for Minecraft Bedrock Edition.")
 		case "#Statues":
+			metaTitle = "Structura Lab: Statues/Decorations"
+			Description.setAttribute("content","A collection of Statues, Monuements, and other decorations for Minecraft Bedrock Edition")
 		case "#Misc":
+			metaTitle = "Structura Lab: Miscellaneous Stuff"
+			Description.setAttribute("content","A collection of Structura files for you to discover. ")
 		case "#data":
 		case "#date-old":
 		case "#popular":
@@ -41,40 +65,65 @@ function load(){
 		case "#random":
 			previousPage=window.location.hash
 			hideMain();
-			loadGrid(window.location.hash,"none");
+			loadGrid(window.location.hash,pagenum);
+			
+			
+			break;
+		case "#TOS":
+			metaTitle = "Structura Lab: Terms Of Service"
+			Description.setAttribute("content","The terms of serivce for using Structura Lab.")
+			
+			showTOS();
 			break;
 		case "#restpass":
 			alert("Not implemented")
 			window.location.hash = ""
+			metaTitle = "Structura Lab: Reset Password"
+			Description.setAttribute("content","Reseting your password")
 			break;
 		case "#":
 		case "":
+			metaTitle = "Structura Lab"
+			Description.setAttribute("content",defaultDescription)
 			hideMain();
-			loadGrid("default","none");
+			loadGrid("default",pagenum);
 			break;
 		case "#login":
+			metaTitle = "Structura Lab: Login"
+			Description.setAttribute("content","Login to your account")
 			showLogin();
 			break;
 		case "#signup":
+			metaTitle = "Structura Lab: Signup"
+			Description.setAttribute("content","Signup for an account")
 			loadSignup();
 			break;
 		case "#userprofile":
+			metaTitle = "Structura Lab: Your Profile"
+			Description.setAttribute("content","Edit your profile")
 			previousPage=window.location.hash
 			loadUserProfilePage();
 			break;
 		case "#signout":
+			metaTitle = "Structura Lab: Signout"
+			Description.setAttribute("content","Signout")
 			signOut();
 			break;
 		case "#upload":
+			metaTitle = "Structura Lab: Upload New"
+			Description.setAttribute("content","Upload a new file")
 			previousPage=window.location.hash
 			showUpload();
 			break;
 		default:
+			metaTitle = "Structura Lab"
+			Description.setAttribute("content",defaultDescription)
 			previousPage=""
 			processHash(window.location.hash);
 			break;
 	}
 }
+
 function processHash(hash){
 	let hashArray = hash.split("#");
 	switch(hashArray[1]){
@@ -83,6 +132,9 @@ function processHash(hash){
 			break;
 		case "profile":
 			makeProfilePage(hashArray[2])
+			break;
+		case "edititem":
+			editItem(hashArray[2])
 			break;
 
 	}
@@ -108,12 +160,30 @@ function itemPage(itemGuid){
 }
 function makeItemPage(item){
 	showItem();
+	
+	metaTitle = "Structura Lab: " + item["Name"]
+	Description.setAttribute("content",item["Description"])
+	document.getElementById("editPageButtonDiv").classList.add("hide")
+	if(credentials){
+		if (credentials.user.username == item["Creator"]){
+			document.getElementById("editPageButtonDiv").classList.remove("hide")
+			document.getElementById("editPageButtonDiv").classList.add("show")
+		}
+	}
 	document.getElementById("itemImg").src = item["Thumbnail"]
 	document.getElementById("itemName").innerHTML = item["Name"]
 	document.getElementById("description").innerHTML = item["Description"]
 	document.getElementById("itemProfile").innerHTML = item["Creator"]
 	document.getElementById("itemProfile").href = "#profile#"+item["Creator"]
-	document.getElementById("itemStructure").href = item["structureFile"]
+	let listFiles = document.getElementById("structureFileDiv")
+	listFiles.innerHTML=""
+	for (const fileName in item["structureFiles"]){
+		let link = document.createElement("a");
+		link.innerHTML=fileName
+		link.href=item["structureFiles"][fileName]
+		listFiles.appendChild(link)
+	}
+
 	let date = new Date(item["date"]);
 	document.getElementById("itemDate").innerHTML = date
 	clearMaterialsList();
@@ -143,6 +213,7 @@ function clearMaterialsList(){
 }
 function makeProfilePage(profile){
 	hideMain()
+	
 	document.getElementById("Profile").classList.remove("hide")
 	document.getElementById("Profile").classList.add("show")
 	fetch(apiUrl, {
@@ -151,16 +222,27 @@ function makeProfilePage(profile){
 	})
 	.then(response => response.json())
 	.then(response => {
-		document.getElementById("youtubeLink").href = response["Youtube"];
-		document.getElementById("discordLink").href = response["Discord"];
-		document.getElementById("patreonLink").href = response["Paetron"];
-		document.getElementById("kofiLink").href = response["Ko-Fi"];
-		document.getElementById("twitchLink").href = response["Twitch"];
-		document.getElementById("youtubeLink").innerHTML = response["Youtube"];
-		document.getElementById("discordLink").innerHTML = response["Discord"];
-		document.getElementById("patreonLink").innerHTML = response["Paetron"];
-		document.getElementById("kofiLink").innerHTML = response["Ko-Fi"];
-		document.getElementById("twitchLink").innerHTML = response["Twitch"];
+		metaTitle = "Structura Lab: " + response["profile"]["name"]
+		Description.setAttribute("content",response["profile"]["name"]+" user profile. Find all of the cool things this user has posted on Structura Lab.")
+		document.getElementById("profileName").innerHTML = response["profile"]["name"]
+		if (response["profileIcon"]){
+			document.getElementById("profileIcon").src = response["profile"]["profileIcon"]
+		}
+		else{
+			document.getElementById("profileIcon").src = 'https://s3.us-east-2.amazonaws.com/structuralab.com/Profiles/Default_pfp.png'
+		}
+		document.getElementById("youtubeLink").href = response["profile"]["Youtube"];
+		document.getElementById("discordLink").href = response["profile"]["Discord"];
+		document.getElementById("patreonLink").href = response["profile"]["Paetron"];
+		document.getElementById("kofiLink").href = response["profile"]["Ko-Fi"];
+		document.getElementById("twitchLink").href = response["profile"]["Twitch"];
+		document.getElementById("youtubeLink").innerHTML = response["profile"]["Youtube"];
+		document.getElementById("discordLink").innerHTML = response["profile"]["Discord"];
+		document.getElementById("patreonLink").innerHTML = response["profile"]["Paetron"];
+		document.getElementById("kofiLink").innerHTML = response["profile"]["Ko-Fi"];
+		document.getElementById("twitchLink").innerHTML = response["profile"]["Twitch"];
+		showGrid();
+		setupGrid(response["items"])
 	})
 }
 
@@ -208,7 +290,9 @@ function setupGrid(items){
 		addElement(items[i]);
 	}
 }
-
+function noProfPic(element){
+	element.src='https://s3.us-east-2.amazonaws.com/structuralab.com/Profiles/Default_pfp.png'
+}
 function addElement(data){
 	let div = document.createElement("div");
 	div.classList.add("item") ;
@@ -219,6 +303,7 @@ function addElement(data){
 	let icon = document.createElement("img");
 	profile.classList.add("profileIcon")
 	icon.src = data["profileIcon"]
+	icon.setAttribute("onerror","noProfPic(this)")
 	let headText = document.createElement("div");
 	headText.classList.add("headText");
 	let profileName = document.createElement("a");
@@ -315,18 +400,99 @@ function uploadMcstructure(){
 function signFiles(token){
 	getSignedS3Urls(uploadFiles,Object.keys(fileUploadObjects),token)
 }
-function uploadFiles(signedURLs){
+function uploadFiles(headder){
+	signedURLs=headder.urls
 	fileUploadObjects
-	console.log(signedURLs)
-	console.log(typeof signedURLs)
 	for (const fileName in signedURLs){
-		console.log(fileName)
-		console.log(signedURLs[fileName])
-		console.log(fileUploadObjects[fileName])
+		postFile(fileUploadObjects[fileName].file,signedURLs[fileName])
 	}
-	alert("got presigned keys. File upload not implemented yet")
+		window.location.hash="#edititem#"+headder.guid
+}
+function postFile(file,signedRequest){
+	const options = {
+		method: 'PUT',
+		body: file
+	};
+	fetch(signedRequest, options).then(response =>{
+		//Status bar updates go here...
+	})
 }
 
+function editItem(guid){
+	hideMain();
+	document.getElementById("editItem").classList.remove("hide")
+	document.getElementById("editItem").classList.add("show")
+	let item={}
+	if(guid in cachedItems){
+		editItemForm(cachedItems[guid])
+	}else{
+		fetch(apiUrl, {
+			method: 'POST',
+			headers: {page:"item",filter:guid}
+		})
+		.then(response => response.json())
+		.then(response => {
+			item=response["item"]
+			cachedItems[item["GUID"]=item]
+			editItemForm(item)
+		})
+	}
+}
+function editItemForm(item){
+	document.getElementById("editThumnail").src = item["Thumbnail"]
+	document.getElementById("editTitle").value = item["Name"]
+	document.getElementById("editDescription").value = item["Description"]
+	document.getElementById("editVisibility").checked = item["Visible"]
+}
+function submitItemEdit(){
+	getToken(postEdit)
+}
+function postEdit(jwtoken){
+	let itemData={}
+	itemData.name = document.getElementById("editTitle").value
+	itemData.description = document.getElementById("editDescription").value
+	itemData.visibility = document.getElementById("editVisibility").checked 
+	const guid = window.location.hash.split("#")[2]
+	itemData=JSON.stringify(itemData)
+	fetch(apiUrl, {
+		method: 'POST',
+		headers: {page:"updateItem",filter:guid,token:jwtoken,data:itemData}
+	})
+	.then(response => response.json())
+	.then(response => {
+		completeEditing()
+	})
+	
+}
+
+function completeEditing(){
+	const guid = window.location.hash.split("#")[2]
+	window.location.hash="#item#"+guid
+}
+
+function editItemButton(){
+	const guid = window.location.hash.split("#")[2]
+	window.location.hash="#edititem#"+guid
+}
+function delteItemButton(){
+	if(confirm("Pressing Okay will delete this post.\nThis cannot be undone.\nPressing Cancel will return.")){
+		getToken(deleteItem)
+	}
+}
+function deleteItem(jwtoken){
+	console.log("deleting")
+	const guid = window.location.hash.split("#")[2]
+	fetch(apiUrl, {
+		method: 'POST',
+		headers: {page:"deleteitem",filter:guid,token:jwtoken}
+	})
+	.then(response => response.json())
+	.then(response => {
+		console.log(response)
+		window.location.hash=previousPage
+	})
+	
+}
 
 
 function description(){
@@ -353,6 +519,11 @@ function showLogin(){
 	document.getElementById("loginFormDiv").classList.remove("hide")
 	document.getElementById("loginFormDiv").classList.add("show")
 }
+function showTOS(){
+	hideMain();
+	document.getElementById("TOS").classList.remove("hide")
+	document.getElementById("TOS").classList.add("show")
+}
 function loadSignup(){
 	hideMain();
 	document.getElementById("user").value = "";
@@ -370,6 +541,10 @@ function showConfirmPage(){
 	
 }
 function loadUserProfilePage(){
+	getToken(fetchProfile)
+}
+
+function fetchProfile(jwtoken){
 	if (credentials==null){
 		showLogin();
 		return
@@ -379,19 +554,24 @@ function loadUserProfilePage(){
 	document.getElementById("userProfile").classList.add("show")
 	fetch(apiUrl, {
 		method: 'POST',
-		headers: {page:"profile",filter:credentials.user.username}
+		headers: {page:"usrprofile",filter:credentials.user.username,token:jwtoken}
 	})
 	.then(response => response.json())
 	.then(response => {
-		document.getElementById("userProfileYoutubeInput").value = response["Youtube"];
-		document.getElementById("userProfileDiscordInput").value = response["Discord"];
-		document.getElementById("userProfilePatreonInput").value = response["Paetron"];
-		document.getElementById("userProfileKoFiInput").value = response["Ko-Fi"];
-		document.getElementById("userProfileTwitchInput").value = response["Twitch"];
+		document.getElementById("userProfileIcon").src = "https://s3.us-east-2.amazonaws.com/structuralab.com/Profiles/"+credentials.user.username+"/profilePic.png"
+		document.getElementById("userProfileYoutubeInput").value = response["profile"]["Youtube"];
+		document.getElementById("userProfileDiscordInput").value = response["profile"]["Discord"];
+		document.getElementById("userProfilePatreonInput").value = response["profile"]["Paetron"];
+		document.getElementById("userProfileKoFiInput").value = response["profile"]["Ko-Fi"];
+		document.getElementById("userProfileTwitchInput").value = response["profile"]["Twitch"];
+		showGrid();
+		setupGrid(response["items"])
 	})
 }
 
+
 function hideMain(){
+	clearGrid();
 	var elements = document.getElementsByClassName("main");
     var i;
     for (i = 0; i < elements.length; i++) {
@@ -639,11 +819,39 @@ function postUserProfile(jwtoken){
 	})
 	.then(response => response.json())
 	.then(response => {
-		console.log(response)
-		alert(response)
-	})	
+		if ("iconURL" in response){
+			let file = document.getElementById('uploadProfilePicture').files[0];
+			if(file){
+				uploadProfilePicture(file,response["iconURL"])
+			}else{
+				alert(response["message"])
+			}
+		}else{
+			alert(response)
+		}
+	})
 }
-function revertUserProfileChanges(){
-	alert("Not implemented")
+function uploadProfilePicture(file,url){
+	const options = {
+		method: 'PUT',
+		body: file
+	};
+	fetch(url, options)
+	.then(response =>{
+		getToken(fixIconSize)
+	})
+}
+function fixIconSize(jwtoken){
+	fetch(apiUrl, {
+		method: 'POST',
+		headers: {page:"resizeimages",filter:"None",
+			imagetype:"profileIcon",
+			token:jwtoken}
+	})
+	.then(response => response.json())
+	.then(response => {
+		document.getElementById("userProfileIcon").src = "https://s3.us-east-2.amazonaws.com/structuralab.com/Profiles/"+credentials.user.username+"/profilePic.png?t=" + new Date().getTime();
+		alert(response)
+	})
 	
 }

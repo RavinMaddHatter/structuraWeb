@@ -31,10 +31,10 @@ CONFIG = _cleanup(
     {
         "Compilers": {
             "c": {
-                "name": "msvc",
-                "linker": "link",
-                "version": "19.29.30153",
-                "commands": "cl",
+                "name": "gcc",
+                "linker": "ld.bfd",
+                "version": "10.2.1",
+                "commands": "cc",
             },
             "cython": {
                 "name": "cython",
@@ -43,10 +43,10 @@ CONFIG = _cleanup(
                 "commands": "cython",
             },
             "c++": {
-                "name": "msvc",
-                "linker": "link",
-                "version": "19.29.30153",
-                "commands": "cl",
+                "name": "gcc",
+                "linker": "ld.bfd",
+                "version": "10.2.1",
+                "commands": "c++",
             },
         },
         "Machine Information": {
@@ -54,13 +54,13 @@ CONFIG = _cleanup(
                 "cpu": "x86_64",
                 "family": "x86_64",
                 "endian": "little",
-                "system": "windows",
+                "system": "linux",
             },
             "build": {
                 "cpu": "x86_64",
                 "family": "x86_64",
                 "endian": "little",
-                "system": "windows",
+                "system": "linux",
             },
             "cross-compiled": bool("False".lower().replace("false", "")),
         },
@@ -70,13 +70,13 @@ CONFIG = _cleanup(
                 "found": bool("True".lower().replace("false", "")),
                 "version": "0.3.23.dev",
                 "detection method": "pkgconfig",
-                "include directory": r"/c/opt/64/include",
-                "lib directory": r"/c/opt/64/lib",
-                "openblas configuration": "USE_64BITINT=1 DYNAMIC_ARCH=1 DYNAMIC_OLDER= NO_CBLAS= NO_LAPACK= NO_LAPACKE= NO_AFFINITY=1 USE_OPENMP= SKYLAKEX MAX_THREADS=2",
-                "pc file directory": r"C:/opt/64/lib/pkgconfig",
+                "include directory": r"/usr/local/include",
+                "lib directory": r"/usr/local/lib",
+                "openblas configuration": "USE_64BITINT=1 DYNAMIC_ARCH=1 DYNAMIC_OLDER= NO_CBLAS= NO_LAPACK= NO_LAPACKE= NO_AFFINITY=1 USE_OPENMP= HASWELL MAX_THREADS=2",
+                "pc file directory": r"/usr/local/lib/pkgconfig",
             },
             "lapack": {
-                "name": "dep3011898447328",
+                "name": "dep139693885986224",
                 "found": bool("True".lower().replace("false", "")),
                 "version": "1.26.3",
                 "detection method": "internal",
@@ -87,7 +87,7 @@ CONFIG = _cleanup(
             },
         },
         "Python Information": {
-            "path": r"C:\Users\runneradmin\AppData\Local\Temp\cibw-run-skelyuts\cp312-win_amd64\build\venv\Scripts\python.exe",
+            "path": r"/opt/python/cp312-cp312/bin/python",
             "version": "3.12",
         },
         "SIMD Extensions": {

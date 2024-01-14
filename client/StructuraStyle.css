@@ -17,6 +17,7 @@
 body {
   margin: 0;
   font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--headder-cover);
 }
 .headText{
 	display:inline-block;
@@ -179,10 +180,12 @@ body {
   padding: 12px 16px;
   text-decoration: none;
   display: block;
+  z-index: 20;
  }
 
 .dropdown-content a:hover {
 background-color: #ddd;
+
 }
 
 .show {
@@ -222,6 +225,7 @@ background-color: #ddd;
 	width:90%;
 	margin-left: auto;
     margin-right: auto;
+	
 }
 
 .gallery{
@@ -316,4 +320,47 @@ background-color: #ddd;
 	margin-left: auto;
     margin-right: auto;
 }
-
+.showProfile{
+	width:90%;
+	margin-left: auto;
+    margin-right: auto;
+	
+}
+.uploadForm1{
+	
+}
+.editItem{
+	width:90%;
+	margin-left: auto;
+    margin-right: auto;
+	
+}
+.footer { 
+	background-color: var(--headder-cover);
+    position: relative;
+	margin-top: -0px;
+	width:90%;
+	left: 0; 
+	right: 0; 
+	margin-left: auto;
+    margin-right: auto;
+    z-index: 0;
+	
+}
+.copyright{
+	text-align: center;
+	margin-left: auto;
+    margin-right: auto;
+	
+}
+.tos{
+	text-align: center;
+	margin-left: auto;
+    margin-right: auto;
+	display: block;
+}
+.termsOfService{
+	width:90%;
+	margin-left: auto;
+    margin-right: auto;
+}
