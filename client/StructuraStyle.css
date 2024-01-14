@@ -191,6 +191,9 @@ background-color: #ddd;
 .show {
 	display:block;
 }
+.showinline {
+	display:inline-block;
+}
 .hide{
 	display: none;
 }
@@ -230,6 +233,7 @@ background-color: #ddd;
 
 .gallery{
 	width:50%;
+	aspect-ratio: 16 / 9;
 	display: inline-block;
 }
 .splash{
@@ -256,9 +260,11 @@ background-color: #ddd;
 }
 
 .itemImg{
-	width:100%;
-	display: inline-block;
-	
+	width:100%;	
+}
+.itemyoutube{
+	width:100%;	
+	aspect-ratio:16/9;
 }
 .details > h3{
 	margin: 0px;
@@ -330,6 +336,12 @@ background-color: #ddd;
 	width:90%;
 	margin-left: auto;
     margin-right: auto;
+}
+.paragraphEntry{
+	width:100%
+}
+.linkEntry{
+	width:100%
 }
 .editItem{
 	width:90%;

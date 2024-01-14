@@ -168,11 +168,25 @@ function makeItemPage(item){
 	document.getElementById("editPageButtonDiv").classList.add("hide")
 	if(credentials){
 		if (credentials.user.username == item["Creator"]){
-			document.getElementById("editPageButtonDiv").classList.remove("hide")
-			document.getElementById("editPageButtonDiv").classList.add("show")
+		document.getElementById("editPageButtonDiv").classList.remove("hide")
+		document.getElementById("editPageButtonDiv").classList.add("show")
 		}
 	}
-	document.getElementById("itemImg").src = "https://s3.us-east-2.amazonaws.com/structuralab.com/"+item["GUID"]+"/fullSizedPicture.png"
+	if("youtube" in item && item["youtube"].length>0){
+		const videoguid = item["youtube"].split("/").pop()
+		const youtubeLink = "https://www.youtube.com/embed/"+videoguid
+		
+		document.getElementById("youtubeEmbed").src=youtubeLink
+		document.getElementById("youtubeEmbed").classList.add("showinline")
+		document.getElementById("youtubeEmbed").classList.remove("hide")
+		document.getElementById("itemImg").classList.add("hide")
+	}
+	else{
+		document.getElementById("itemImg").src = "https://s3.us-east-2.amazonaws.com/structuralab.com/"+item["GUID"]+"/fullSizedPicture.png"
+		document.getElementById("itemImg").classList.add("showinline")
+		document.getElementById("itemImg").classList.remove("hide")
+		document.getElementById("youtubeEmbed").classList.add("hide")
+	}
 	document.getElementById("itemName").innerText = item["Name"]
 	document.getElementById("description").innerText = item["Description"]
 	document.getElementById("itemProfile").innerText = item["Creator"]
@@ -333,7 +347,14 @@ function addElement(data){
 	let imgContainer = document.createElement("div");
 	let itemLink = document.createElement("a");
 	let itemImg = document.createElement("img");
-	itemImg.src = "https://s3.us-east-2.amazonaws.com/structuralab.com/"+data["GUID"]+"/thumbnail.png"
+	if("youtube" in data && data["youtube"].length>0){
+		const videoguid = data["youtube"].split("/").pop()
+		const youtubeThumb = "https://img.youtube.com/vi/"+videoguid+"/0.jpg"
+		itemImg.src = youtubeThumb
+	}
+	else{
+		itemImg.src = "https://s3.us-east-2.amazonaws.com/structuralab.com/"+data["GUID"]+"/thumbnail.png"
+	}
 	itemImg.setAttribute("onerror","noThumbnail(this)")
 	itemImg.classList.add("itemPicture");
 	itemLink.href="#item#"+data["GUID"]
@@ -419,11 +440,13 @@ function uploadFiles(headder){
 	signedURLs=headder.urls
 	fileUploadObjects
 	for (const fileName in signedURLs){
-		postFile(fileUploadObjects[fileName].file,signedURLs[fileName])
+		console.log(fileUploadObjects)
+		postFile(fileUploadObjects[fileName].Body,signedURLs[fileName])
 	}
 		window.location.hash="#edititem#"+headder.guid
 }
 function postFile(file,signedRequest){
+	console.log(file)
 	const options = {
 		method: 'PUT',
 		body: file
@@ -454,11 +477,19 @@ function editItem(guid){
 	}
 }
 function editItemForm(item){
-	console.log(item)
 	document.getElementById("editThumnail").src = "https://s3.us-east-2.amazonaws.com/structuralab.com/"+item["GUID"]+"/thumbnail.png"
 	document.getElementById("editTitle").value = item["Name"]
 	document.getElementById("editDescription").value = item["Description"]
+	document.getElementById("editCategory").value = item["Category"]
 	document.getElementById("editVisibility").checked = item["Visible"]
+	if("youtube" in item){
+		document.getElementById("setYoutubeLink").value = item["youtube"]
+	}
+	if("youtube" in item && item["youtube"].length>0){
+		const videoguid = item["youtube"].split("/").pop()
+		const youtubeThumb = "https://img.youtube.com/vi/"+videoguid+"/0.jpg"
+		document.getElementById("editThumnail").src = youtubeThumb
+	}
 }
 function submitItemEdit(){
 	getToken(postEdit)
@@ -469,6 +500,8 @@ function postEdit(jwtoken){
 	itemData.name = document.getElementById("editTitle").value
 	itemData.description = document.getElementById("editDescription").value
 	itemData.visibility = document.getElementById("editVisibility").checked 
+	itemData.category = document.getElementById("editCategory").value
+	itemData.youtubelink = document.getElementById("setYoutubeLink").value 
 	const guid = window.location.hash.split("#")[2]
 	itemData=JSON.stringify(itemData)
 	fetch(apiUrl, {
@@ -482,7 +515,7 @@ function postEdit(jwtoken){
 			if(file){
 				uploadThumnail(file,response["thumbnailURL"])
 			}else{
-				alert(response["message"])
+				//note sucess
 			}
 		}else{
 			alert(response)
@@ -492,6 +525,7 @@ function postEdit(jwtoken){
 	
 }
 function uploadThumnail(file,url){
+	console.log(file)
 	const options = {
 		method: 'PUT',
 		body: file
@@ -517,7 +551,6 @@ function delteItemButton(){
 	}
 }
 function deleteItem(jwtoken){
-	console.log("deleting")
 	const guid = window.location.hash.split("#")[2]
 	fetch(apiUrl, {
 		method: 'POST',
@@ -525,7 +558,6 @@ function deleteItem(jwtoken){
 	})
 	.then(response => response.json())
 	.then(response => {
-		console.log(response)
 		window.location.hash=previousPage
 	})
 	
@@ -627,8 +659,10 @@ function hideMain(){
 function clearForms(){
 	let inputs = document.getElementsByTagName('input');
 	for (index = 0; index < inputs.length; ++index) {
-		inputs[index].value="";
-	}
+		if(inputs[index].type!="submit"){
+			inputs[index].value="";
+		}
+	}	
 }
 
 function hideDetails(){
@@ -928,6 +962,6 @@ function makeStructura(jwtoken){
 	})
 	.then(response => response.json())
 	.then(response => {
-		console.log(response)
+		//consider adding update when complete
 	})
 }

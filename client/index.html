@@ -65,7 +65,8 @@
 	<div class="splash" id="splash">
 		<h1 id="itemName"></h1>
 		<div class="gallery" id="gallery">
-			<img class="itemImg" id="itemImg" onerror="noImage(this)">
+			<img class="itemImg hide" id="itemImg" onerror="noImage(this)">
+			<iframe class="itemyoutube hide" id="youtubeEmbed"></iframe>
 		</div>
 		<div class="brief" id="brief">
 			<h3>Creator</h3>
@@ -113,19 +114,38 @@
   <!-- Edit Item -->
   <div class="editItem main hide" id="editItem">
 	<div >
-		<span>Title: </span>
+		<h3>Title: </h3>
 		<input type="text" id="editTitle"> </input>
 	</div>
     <div class="editThumnail">
-	  <div class="gallery" id="gallery">
-		<img class="itemImg" id="editThumnail" onerror="noImage(this)" ></img>
-	  </div>
-	  <br></br>
-	  <input type="file" id="thumbnailUpload" accept=".png"> 
+		<h4>Thumbnails</h4>
+		<div class="gallery" id="gallery">
+			<img class="itemImg" id="editThumnail" onerror="noImage(this)" ></img>
+		</div>
+		<div>
+			<input type="file" id="thumbnailUpload" accept=".png"> 
+		</div>
+		<div> <b>Youtube Link</b>(replaces thumbnails): </div>
+		<input type="text" class="linkEntry" id="setYoutubeLink"> </input>
 	</div>
 	<div>
-		<span>Description: </span>
-		<textarea id="editDescription" cols="40" rows="5"></textarea>
+		<h4>Category: </h4>
+		<select id="editCategory">
+			<option value="Farms">Farms</option>
+			<option value="Buildings">Buildings</option>
+			<option value="Terrain">Terrain</option>
+			<option value="Villager">Villager Tech</option>
+			<option value="Storage">Storage</option>
+			<option value="Flying">Flying Machines</option>
+			<option value="Furnaces">Furnaces</option>
+			<option value="Redstone">Redstone</option>
+			<option value="Statues">Statues</option>
+			<option value="Misc">Misc</option>
+		</select>
+	</div>
+	<div>
+		<h4>Description: </h4>
+		<textarea id="editDescription" class="paragraphEntry" rows="5"></textarea>
 	</div>
 	<div>
 		<input type="checkbox" id="editVisibility">Visible:</input>
@@ -153,7 +173,7 @@
 		</div>
 		<div id="changeProblems"></div>
 		<div class= "buttonHolder">
-		  <input class="Control__input" type="submit" value="Login" />
+		  <input class="Control__input" type="submit">Login</input>
 		  </div>
 		</form>
   </div>
