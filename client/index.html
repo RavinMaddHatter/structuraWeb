@@ -65,7 +65,7 @@
 	<div class="splash" id="splash">
 		<h1 id="itemName"></h1>
 		<div class="gallery" id="gallery">
-			<img class="itemImg" id="itemImg">
+			<img class="itemImg" id="itemImg" onerror="noImage(this)">
 		</div>
 		<div class="brief" id="brief">
 			<h3>Creator</h3>
@@ -75,6 +75,8 @@
 			<h3>Structure files:</h3>
 			<div id="structureFileDiv">
 			</div>
+			<h3>Structura pack:</h3>
+			<a id="structurapack"></a>
 		</div>
 		<div id="editPageButtonDiv" class = "hide">
 			<button id="editPageButton" onclick="editItemButton()">Edit Page</button>
@@ -116,9 +118,10 @@
 	</div>
     <div class="editThumnail">
 	  <div class="gallery" id="gallery">
-		<img class="itemImg" id="editThumnail" ></img>
+		<img class="itemImg" id="editThumnail" onerror="noImage(this)" ></img>
 	  </div>
-	  <input type="file" id="fileUpload" accept=".png"> 
+	  <br></br>
+	  <input type="file" id="thumbnailUpload" accept=".png"> 
 	</div>
 	<div>
 		<span>Description: </span>

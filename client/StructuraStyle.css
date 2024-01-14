@@ -327,7 +327,9 @@ background-color: #ddd;
 	
 }
 .uploadForm1{
-	
+	width:90%;
+	margin-left: auto;
+    margin-right: auto;
 }
 .editItem{
 	width:90%;
