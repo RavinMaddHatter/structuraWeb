@@ -66,12 +66,12 @@ function load(){
 		case "#TOS":
 			metaTitle = "Structura Lab: Terms Of Service"
 			Description.setAttribute("content","The terms of serivce for using Structura Lab.")
-			showTOS();
+			showElement(document.getElementById("TOS"));;
 			break;
 		case "#restpass":
 			case "#restpass":
 			previousPage="#userprofile"
-			showResetPassword();
+			showElement(document.getElementById("ResetPasswordDiv"));;
 			break;
 		case "#"://home/default
 		case ""://home/default
@@ -82,12 +82,12 @@ function load(){
 		case "#login":
 			metaTitle = "Structura Lab: Login"
 			Description.setAttribute("content","Login to your account")
-			showLogin();
+			showElement(document.getElementById("loginFormDiv"));;
 			break;
 		case "#signup":
 			metaTitle = "Structura Lab: Signup"
 			Description.setAttribute("content","Signup for an account")
-			showSignup();
+			showElement(document.getElementById("signupFormDiv"));;
 			break;
 		case "#userprofile":
 			metaTitle = "Structura Lab: Your Profile"
@@ -104,7 +104,7 @@ function load(){
 			metaTitle = "Structura Lab: Upload New"
 			Description.setAttribute("content","Upload a new file")
 			previousPage=window.location.hash
-			showUpload();
+			showElement(document.getElementById("uploadStep1"),checkLogin=true);
 			break;
 		default://processing fall through. particulary double hashed items
 			metaTitle = "Structura Lab"
@@ -135,7 +135,7 @@ function processHash(hash){
 
 //page generators
 function makeItemPage(item){
-	showItem();
+	showElement(document.getElementById("itemPage"));;
 	metaTitle = "Structura Lab: " + item["Name"]
 	Description.setAttribute("content",item["Description"])
 	document.getElementById("editPageButtonDiv").classList.add("hide")
@@ -210,7 +210,6 @@ window.onclick = function(event) {//clicking the dropdowns
     hideDropdowns();
   }
 }
-
 window.addEventListener("resize", resizeGrid);
 function resizeGrid(size){
 	var height = document.body.clientHeight;
@@ -228,8 +227,11 @@ function resizeGrid(size){
 	document.getElementById("grid").style.gridTemplateColumns = gridTempCol;
 	document.getElementById("grid").style.gridTemplateRows = gridTempRow;
 }
+//Page Generation Callbacks
 function setupGrid(items){
-	cachedItems={}
+	if (Object.keys(cachedItems).length>10000){//one item averages about 1kB limiting memory use to about 10MB
+		cachedItems={}
+	}
 	resizeGrid(items.length)
 	for(var i=0; i<items.length; i++){
 		cachedItems[items[i]["GUID"]]=items[i]
@@ -258,7 +260,6 @@ function addElement(data){
 	itemName.href = "#item#"+data["GUID"]
 	itemName.classList.add("itemNameGrid")
 	itemName.innerText = data["Name"].slice(0,40)	
-	
 	let imgContainer = document.createElement("div");
 	let itemLink = document.createElement("a");
 	let itemImg = document.createElement("img");
@@ -284,7 +285,6 @@ function addElement(data){
 	div.appendChild(itemLink)
 	document.getElementById("grid").appendChild(div);
 }
-
 function editItemForm(item){
 	document.getElementById("editThumnail").src = "https://s3.us-east-2.amazonaws.com/structuralab.com/"+item["GUID"]+"/thumbnail.png"
 	document.getElementById("editTitle").value = item["Name"]
@@ -300,18 +300,6 @@ function editItemForm(item){
 		document.getElementById("editThumnail").src = youtubeThumb
 	}
 }
-/* When the user clicks on the button, 
-toggle between hiding and showing the dropdown content */
-
-function clickSort() {
-	
-  show = !document.getElementById("sort").classList.contains("show");
-  hideDropdowns();
-  if(show){
-	document.getElementById("sort").classList.add("show");
-  }
-}
-
 // Default on error functions
 function noProfPic(element){
 	element.src='https://s3.us-east-2.amazonaws.com/structuralab.com/Profiles/Default_pfp.png'
@@ -324,6 +312,13 @@ function noImage(element){
 }
 
 // button responses
+function clickSort() {
+  show = !document.getElementById("sort").classList.contains("show");
+  hideDropdowns();
+  if(show){
+	document.getElementById("sort").classList.add("show");
+  }
+}
 function clickFilter() {
   show = !document.getElementById("filter").classList.contains("show");
   hideDropdowns();
@@ -385,16 +380,17 @@ function uploadMcstructure(){
 function goHome(){
 	window.location.hash="";
 }
-function showUpload(){
-	if(credentials=null){
-		window.location.hash = '#login';
-		showLogin();
-	}
+function showElement(element,checkLogin=false){
 	hideMain();
-	document.getElementById("uploadStep1").classList.remove("hide")
-	document.getElementById("uploadStep1").classList.add("show")
-	
+	if(credentials=null && checkLogin){
+		window.location.hash = '#login';
+		showElement(document.getElementById("loginFormDiv"));
+	}else{
+		element.classList.remove("hide")
+		element.classList.add("show")
+	}
 }
+
 function completeEditing(){
 	const guid = window.location.hash.split("#")[2]
 	window.location.hash="#item#"+guid
@@ -403,47 +399,8 @@ function showGrid(){
 	document.getElementById("grid").classList.remove("hide")
 	document.getElementById("grid").classList.add("showGrid")
 }
-function showItem(){
-	hideMain();
-	document.getElementById("itemPage").classList.remove("hide")
-	document.getElementById("itemPage").classList.add("show")
-}
-function showLogin(){
-	hideMain();
-	document.getElementById("loginFormDiv").classList.remove("hide")
-	document.getElementById("loginFormDiv").classList.add("show")
-}
-function showResetPassword(){
-	hideMain();
-	document.getElementById("ResetPasswordDiv").classList.remove("hide")
-	document.getElementById("ResetPasswordDiv").classList.add("show")
-	
-}
-function showTOS(){
-	hideMain();
-	document.getElementById("TOS").classList.remove("hide")
-	document.getElementById("TOS").classList.add("show")
-}
-function showSignup(){
-	hideMain();
-	document.getElementById("user").value = "";
-	document.getElementById("pass").value = "";
-	document.getElementById("passConf").value = "";
-	document.getElementById("email").value = "";
-	document.getElementById("signupFormDiv").classList.remove("hide")
-	document.getElementById("signupFormDiv").classList.add("show")
-	
-}
-function showConfirmPage(){
-	hideMain();
-	document.getElementById("confirmDiv").classList.remove("hide")
-	document.getElementById("confirmDiv").classList.add("show")
-	
-}
 function showEditItem(guid){
-	hideMain();
-	document.getElementById("editItem").classList.remove("hide")
-	document.getElementById("editItem").classList.add("show")
+	showElement(document.getElementById("editItem"));
 	let item={}
 	if(guid in cachedItems){
 		editItemForm(cachedItems[guid])
@@ -461,9 +418,7 @@ function showEditItem(guid){
 	}
 }
 function showProfilePage(profile){
-	hideMain()
-	document.getElementById("Profile").classList.remove("hide")
-	document.getElementById("Profile").classList.add("show")
+	showElement(document.getElementById("Profile"));
 	fetch(apiUrl, {
 		method: 'POST',
 		headers: {page:"profile",filter:profile}
@@ -473,12 +428,7 @@ function showProfilePage(profile){
 		metaTitle = "Structura Lab: " + response["profile"]["name"]
 		Description.setAttribute("content",response["profile"]["name"]+" user profile. Find all of the cool things this user has posted on Structura Lab.")
 		document.getElementById("profileName").innerText = response["profile"]["name"]
-		if (response["profileIcon"]){
-			document.getElementById("profileIcon").src = "https://s3.us-east-2.amazonaws.com/structuralab.com/Profiles/"+response["profile"]["name"]+"/profilePic.png"
-		}
-		else{
-			document.getElementById("profileIcon").src = 'https://s3.us-east-2.amazonaws.com/structuralab.com/Profiles/Default_pfp.png'
-		}
+		document.getElementById("profileIcon").src = "https://s3.us-east-2.amazonaws.com/structuralab.com/Profiles/"+response["profile"]["name"]+"/profilePic.png"
 		showlink(document.getElementById("youtubeLink"),response["profile"]["Youtube"])
 		showlink(document.getElementById("discordLink"),response["profile"]["Discord"])
 		showlink(document.getElementById("patreonLink"),response["profile"]["Paetron"])
@@ -493,12 +443,12 @@ function showlink(element,url){
 		element.href = "#";
 		element.innerText = "None";
 		element.classList.add("hide")
-		element.classList.remove("show")
+		element.classList.remove("showinline")
 	}else{
 		element.href = url;
 		element.innerText = url;
 		element.classList.remove("hide")
-		element.classList.add("show")
+		element.classList.add("showinline")
 		
 	}
 }
@@ -570,7 +520,7 @@ function signUp(email, password, usr) {
 		document.getElementById("pass").value = "";
 		document.getElementById("passConf").value = "";
 		document.getElementById("email").value = "";
-		showConfirmPage()
+		showElement(document.getElementById("confirmDiv"));
 	});
 }
 let changePassForm = document.getElementById("changePasswordForm");
@@ -751,7 +701,7 @@ function signFiles(jwtoken){
 }
 function fetchProfile(jwtoken){
 	if (credentials==null){
-		showLogin();
+		showElement(document.getElementById("loginFormDiv"));;
 		return
 	}
 	hideMain()
@@ -900,7 +850,7 @@ function postEdit(jwtoken){
 	})
 }
 //public data fetches 
-function getItemData(itemGuid){
+function getItemData(itemGuid){//gets item data if and only if the data isnt cached
 	let item={}
 	if(itemGuid in cachedItems){
 		makeItemPage(cachedItems[itemGuid])
@@ -918,7 +868,7 @@ function getItemData(itemGuid){
 	}
 }
 
-function getBulkItemData(page_value,filter_value){
+function getBulkItemData(page_value,filter_value){//
 	showGrid();
 	fetch(apiUrl, {
 		method: 'POST',
