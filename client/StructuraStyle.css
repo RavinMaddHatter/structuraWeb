@@ -7,6 +7,7 @@
   --mid-headder-button-hover: #273746;
   --middle-nav-background: #17202A;
   --mid-header-text: white;
+  --border-color:#333;
 }
 
 * {
@@ -286,20 +287,37 @@ background-color: #ddd;
 	padding: 0px;
 	
 }
-
 .materialsGrid{
 	display: grid;
-	grid-template-columns: auto auto;
+	grid-template-columns: 50% auto auto auto;
 	grid-gap: 1px;
 	padding: 1px;
 }
+.itemNameH{
+	
+	border-right: 1px solid var(--border-color);
+    margin-block-start: 0px;
+    margin-block-end: 0px;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+}
+.itemCountH{
+
+    margin-block-start: 0px;
+    margin-block-end: 0px;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+}
 .itemName{
+	border-right: 1px solid var(--border-color);
+	border-top: 1px solid var(--border-color);
     margin-block-start: 0px;
     margin-block-end: 0px;
     margin-inline-start: 0px;
     margin-inline-end: 0px;
 }
 .itemCount{
+	border-top: 1px solid var(--border-color);
     margin-block-start: 0px;
     margin-block-end: 0px;
     margin-inline-start: 0px;

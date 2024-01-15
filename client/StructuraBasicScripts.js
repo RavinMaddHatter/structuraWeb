@@ -166,12 +166,34 @@ function makeItemPage(item){
 	document.getElementById("itemProfile").innerText = item["Creator"]
 	document.getElementById("itemProfile").href = "#profile#"+item["Creator"]
 	let listFiles = document.getElementById("structureFileDiv")
+	var listNametags = document.getElementById("nametags")
+
 	listFiles.innerHTML=""
+	listNametags.innerHTML=""
+	let numEntries= 0;
 	for (const fileName in item["structureFiles"]){
+		numEntries+=1;
 		let link = document.createElement("a");
+		link.classList.add("show")
 		link.innerText=fileName
 		link.href=item["structureFiles"][fileName]
 		listFiles.appendChild(link)
+		let nameTag=fileName
+		nameTag=nameTag.replace(".mcstructure","")
+		let tag = document.createElement("div");
+		tag.innerText=nameTag
+		listNametags.appendChild(tag)
+	}
+	if(numEntries>1){
+		document.getElementById("nametags").classList.add("show");
+		document.getElementById("nametags").classList.remove("hide");
+		document.getElementById("nametageHead").classList.add("show");
+		document.getElementById("nametageHead").classList.remove("hide");
+	}else{
+		document.getElementById("nametags").classList.remove("show");
+		document.getElementById("nametags").classList.add("hide");
+		document.getElementById("nametageHead").classList.remove("show");
+		document.getElementById("nametageHead").classList.add("hide");
 	}
 	if("StructuraFile" in item){
 		document.getElementById("structurapack").innerText = item["Name"]+".mcpack"
@@ -187,6 +209,23 @@ function makeItemPage(item){
 	const sortable = Object.entries(item["MaterialsList"])
     .sort(([,a],[,b]) => b-a)
     .reduce((r, [k, v]) => ({ ...r, [k]: v }), {});
+	let itemNameH = document.createElement("h4");
+	itemNameH.classList.add("itemNameH");
+	itemNameH.innerText = "Item Name";
+	let itemCountH = document.createElement("h4");
+	itemCountH.classList.add("itemNameH");
+	itemCountH.innerText = "Number Items";
+	let itemStacksH = document.createElement("h4");
+	itemStacksH.classList.add("itemNameH");
+	itemStacksH.innerText = "Stacks Items\n(round up)";
+	let itemShulkersH = document.createElement("h4");
+	itemShulkersH.classList.add("itemCountH");
+	itemShulkersH.innerText = "Stacks Items\n(round up)";
+	
+	document.getElementById("materialsList").appendChild(itemNameH);
+	document.getElementById("materialsList").appendChild(itemCountH);
+	document.getElementById("materialsList").appendChild(itemStacksH);
+	document.getElementById("materialsList").appendChild(itemShulkersH);
 	for (const [key, value] of Object.entries(sortable)) {
 		addItemToMatlist(key,value)
 	}
@@ -197,10 +236,19 @@ function addItemToMatlist(key,value){
 	itemName.classList.add("itemName");
 	itemName.innerText = key;
 	let itemCount = document.createElement("p");
-	itemCount.classList.add("itemCount");
+	itemCount.classList.add("itemName");
 	itemCount.innerText = value;
+	
+	let itemStack = document.createElement("p");
+	itemStack.classList.add("itemName");
+	itemStack.innerText = Math.ceil(value/64);
+	let itemShulkers = document.createElement("p");
+	itemShulkers.classList.add("itemCount");
+	itemShulkers.innerText = Math.ceil(value/1728);
 	document.getElementById("materialsList").appendChild(itemName);
 	document.getElementById("materialsList").appendChild(itemCount);
+	document.getElementById("materialsList").appendChild(itemStack);
+	document.getElementById("materialsList").appendChild(itemShulkers);
 }
 //Event Listeners
 window.onhashchange = function(){//checks if the hash has changed to refresh user views
@@ -383,7 +431,7 @@ function goHome(){
 }
 function showElement(element,checkLogin=false){
 	hideMain();
-	if(credentials=null && checkLogin){
+	if(credentials == null && checkLogin){
 		window.location.hash = '#login';
 		showElement(document.getElementById("loginFormDiv"));
 	}else{
@@ -531,7 +579,7 @@ changePassForm.addEventListener("submit", (e) => {
 	let pass = document.getElementById("changePass").value;
 	let passConf = document.getElementById("changePassConf").value;
 	if(!validatePassword(pass)){
-		document.getElementById("changeProblems").innerText = "Password must be atleast 8 charaters and contain: upper case, lower case, number and special character"
+		document.getElementById("changeProblems").innerText = "Password must be at least 8 charaters and contain: upper case, lower case, number and special character"
 		return
 	}
 	if(pass!=passConf){
@@ -653,8 +701,8 @@ function login(usr,pass){
 	cognitoUser = new AmazonCognitoIdentity.CognitoUser(userData);
 	cognitoUser.authenticateUser(authenticationDetails, {
 		onSuccess: function(result) {
-			checkLogin()
 			window.location.hash = previousPage;
+			checkLogin();
 		},
 		onFailure: function(err) {
 			alert(err.message || JSON.stringify(err));
@@ -676,7 +724,6 @@ function saveUserProfile(){
 }
 // Posting/uploading files (pre-signed S3 URLS)
 function postFile(file,signedRequest){
-	console.log(file)
 	const options = {
 		method: 'PUT',
 		body: file
@@ -699,7 +746,6 @@ function uploadFileBatch(headder){
 	signedURLs=headder.urls
 	fileUploadObjects
 	for (const fileName in signedURLs){
-		console.log(fileUploadObjects)
 		postFile(fileUploadObjects[fileName].Body,signedURLs[fileName])
 	}
 		window.location.hash="#edititem#"+headder.guid
@@ -819,7 +865,10 @@ function makeStructura(jwtoken){
 	})
 	.then(response => response.json())
 	.then(response => {
-		//consider adding update when complete
+		cachedItems={}
+		let hashArray = window.location.hash.split("#");//double hashed items for things like user/items lookups
+		delete cachedItems[hashArray[2]]
+		getItemData(hashArray[2])
 	})
 }
 
