@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<link rel="icon" type="image/png" href="/favicon.png"/>
 <title id="metaTitle">Structura Lab</title>
 <meta name="description" id="metaDescription" content=""></meta>
 <!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3005750757891844"
@@ -29,6 +30,9 @@
 </div>
 <div class="content">
 <div class="middlenav">
+  <div class="dropdown">
+	<button onclick="goHome()" class="dropbtn">Home</button>
+  </div>
   <div class="dropdown">
   <button onclick="clickFilter()" class="dropbtn">Category</button>
     <div id="filter" class="dropdown-content">
@@ -148,7 +152,7 @@
 		<textarea id="editDescription" class="paragraphEntry" rows="5"></textarea>
 	</div>
 	<div>
-		<input type="checkbox" id="editVisibility">Visible:</input>
+		<input type="checkbox" id="editVisibility">Show to Public:</input>
 	</div>
 	<div>
 		<button onclick="submitItemEdit()"> Submit </button>
@@ -240,6 +244,30 @@
 		<div class= "buttonHolder">
 		  <input class="control__submit" type="submit" value="Submit" />
 		  <input class="control__submit" type="submit" value="Resend" />
+		</div>
+	  </form>
+	</div>
+	
+	<div class="LoginForm main hide" id="ResetPassword">
+	  <h3 class="LoginForm__title">Reset Password</h3>
+	  <div id="emailConfirmMsg"></div>
+	  <form class="LoginForm__form" id = "resetPasswordForm">
+		<div class="Control">
+		  <label class="Control__label" for="confirmation">Reset Code</label>
+		  <input class="Control__input" type="text" placeholder="number" id = "resetCode"/>
+		</div>
+				<div>
+		  <label class="Control__label" for="password">Password</label>
+		  <input class="Control__input" name="password" type="password" placeholder="Password" id="pass"/>
+		</div>
+		<div>
+		  <label class="Control__label" for="passConf">Confirm Password</label>
+		  <input class="Control__input" name="passConf" type="password" placeholder="Password" id="passConf"/>
+		</div>
+		<div id="problems"></div>
+		<div class= "buttonHolder">
+		  <input class="control__submit" type="submit" value="Submit" />
+		  <!--input class="control__submit" type="submit" value="Resend" /-->
 		</div>
 	  </form>
 	</div>

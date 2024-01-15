@@ -224,6 +224,16 @@ background-color: #ddd;
 .main > h3{
 	
 }
+.titleHeadding{
+	text-decoration: none;
+	height:30px;
+	
+}
+.titleHeadding:hover, .titleHeadding:focus {
+  background-color: var(--headder-cover);
+  color: black;
+}
+
 .detailsContainer{
 	width:90%;
 	margin-left: auto;
