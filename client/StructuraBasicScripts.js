@@ -7,6 +7,7 @@ const poolData = {
 	ClientId: 'tese5jomgf225lrvescg5o96l', // Your client id here
 };
 //Global Variables
+var resetUsername = "";//used in the password reset process
 var previousEndKey = "";//used in dynamoDB querry to get next MB of data
 var cachedItems = {}//cache of all items from fetch to reduce needless API querries
 var userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);//user pool data for account management
@@ -594,8 +595,51 @@ confirmForm.addEventListener("submit", (e) => {
 		}
 	});
 });
-
-
+let resetForm1 = document.getElementById("resetPasswordForm1");
+resetForm1.addEventListener("submit", (e) => {
+	e.preventDefault();
+	resetUsername = document.getElementById("resetUsername").value;
+	let cognitoUser = new AmazonCognitoIdentity.CognitoUser({
+        Username: resetUsername,
+        Pool: userPool
+    });
+	cognitoUser.forgotPassword({
+        onSuccess: function(result) {
+            showElement(document.getElementById("ResetPassword2"))
+        },
+        onFailure: function(err) {
+            alert(err);
+        },
+    });
+});
+let resetForm2 = document.getElementById("resetPasswordForm");
+resetForm2.addEventListener("submit", (e) => {
+	e.preventDefault();
+	let verificationCode = document.getElementById("resetCode").value;
+	let pass = document.getElementById("resetpass").value;
+	let passConf = document.getElementById("resetpassConf").value;
+	if(!validatePassword(pass)){
+		document.getElementById("problemsreset").innerText = "Password must be atleast 8 charaters and contain: upper case, lower case, number and special character"
+		return
+	}
+	if(pass!=passConf){
+		document.getElementById("problemsreset").innerText = "Password and confirmation must match"
+		return
+	}
+	document.getElementById("problemsreset").innerText = ""
+	let cognitoUser = new AmazonCognitoIdentity.CognitoUser({
+        Username: resetUsername,
+        Pool: userPool
+    });
+	cognitoUser.confirmPassword(verificationCode, pass, {
+            onFailure(err) {
+                alert(err);
+            },
+            onSuccess() {
+                window.location.hash="#login"
+            },
+        });
+});
 function login(usr,pass){
 	let authenticationData = {
 		Username: usr,
@@ -696,8 +740,9 @@ function getToken(callback){
 }
 
 //Signed Event Callbacks typically called after a getToken
-function signFiles(jwtoken){
+function signFiles(jwtoken){// called from the file upload button as callback. needs addition args
 	getSignedS3Urls(uploadFileBatch,Object.keys(fileUploadObjects),jwtoken)
+	//consider refactor of call back to incldue addtional args to remove function
 }
 function fetchProfile(jwtoken){
 	if (credentials==null){

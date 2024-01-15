@@ -247,24 +247,37 @@
 		</div>
 	  </form>
 	</div>
-	
-	<div class="LoginForm main hide" id="ResetPassword">
+	<div class="LoginForm main hide" id="ResetPasswordDiv">
 	  <h3 class="LoginForm__title">Reset Password</h3>
+	  <div id="emailConfirmMsg"></div>
+	  <form class="LoginForm__form" id = "resetPasswordForm1">
+		<div class="Control">
+		  <label class="Control__label" for="confirmation">username</label>
+		  <input class="Control__input" type="text" placeholder="username" id = "resetUsername"/>
+		</div>
+		<div class= "buttonHolder">
+		  <input class="control__submit" type="submit" value="Submit" />
+		  <!--input class="control__submit" type="submit" value="Resend" /-->
+		</div>
+	  </form>
+	</div>
+	<div class="LoginForm main hide" id="ResetPassword2">
+	  <h3 class="LoginForm__title">Reset Password: Verification Code</h3>
 	  <div id="emailConfirmMsg"></div>
 	  <form class="LoginForm__form" id = "resetPasswordForm">
 		<div class="Control">
 		  <label class="Control__label" for="confirmation">Reset Code</label>
 		  <input class="Control__input" type="text" placeholder="number" id = "resetCode"/>
 		</div>
-				<div>
+		<div>
 		  <label class="Control__label" for="password">Password</label>
-		  <input class="Control__input" name="password" type="password" placeholder="Password" id="pass"/>
+		  <input class="Control__input" name="password" type="password" placeholder="Password" id="resetpass"/>
 		</div>
 		<div>
 		  <label class="Control__label" for="passConf">Confirm Password</label>
-		  <input class="Control__input" name="passConf" type="password" placeholder="Password" id="passConf"/>
+		  <input class="Control__input" name="passConf" type="password" placeholder="Password" id="resetpassConf"/>
 		</div>
-		<div id="problems"></div>
+		<div id="problemsreset"></div>
 		<div class= "buttonHolder">
 		  <input class="control__submit" type="submit" value="Submit" />
 		  <!--input class="control__submit" type="submit" value="Resend" /-->
