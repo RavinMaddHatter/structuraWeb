@@ -187,6 +187,20 @@ body {
 .dropdown-content a:hover {
 background-color: #ddd;
 
+}.dropdown-content button {
+  color: black;
+  width: 150px;
+  border: none;
+  font-size: 16px;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  z-index: 20;
+ }
+
+.dropdown-content button:hover {
+background-color: #ddd;
+
 }
 
 .show {
@@ -243,8 +257,13 @@ background-color: #ddd;
 }
 
 .gallery{
-	width:50%;
+	vertical-align: top;
+	width:49%;
 	aspect-ratio: 16 / 9;
+	display: inline-block;
+}
+.rightGallery{
+	width:49%;
 	display: inline-block;
 }
 .splash{
@@ -370,6 +389,9 @@ background-color: #ddd;
 }
 .linkEntry{
 	width:100%
+}
+.EditTitle{
+	display:inline-block;
 }
 .editItem{
 	width:90%;

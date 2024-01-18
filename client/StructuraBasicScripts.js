@@ -277,6 +277,7 @@ function resizeGrid(size){
 	document.getElementById("grid").style.gridTemplateRows = gridTempRow;
 }
 //Page Generation Callbacks
+
 function setupGrid(items){
 	if (Object.keys(cachedItems).length>10000){//one item averages about 1kB limiting memory use to about 10MB
 		cachedItems={}
@@ -361,6 +362,30 @@ function noImage(element){
 }
 
 // button responses
+function sortGrid(key){
+	let sortedItems=[]
+	switch(key){
+		case 'newest':
+			sortedItems = sortItems("Date",cachedItems)
+			break;
+		case 'name':
+			sortedItems = sortItems("Name",cachedItems).reverse();
+			break;
+		case 'oldest':
+			sortedItems = sortItems("Date",cachedItems).reverse();
+			break;
+		case 'random':
+			sortedItems = Object.values(cachedItems).sort( () => .5 - Math.random() );
+			break;
+	}
+	clearChildElements(document.getElementById("grid"));//clears the grid elements
+	setupGrid(sortedItems)
+	for (let i = 0; i < sortedItems.length; i++) {
+		console.log(sortedItems[i])
+		addElement(sortedItems[i]);
+	}
+}
+
 function clickSort() {
   show = !document.getElementById("sort").classList.contains("show");
   hideDropdowns();
@@ -973,3 +998,26 @@ function getBulkItemData(page_value,filter_value){//
 		setupGrid(response["items"])
 	})
 }
+
+//Helper functions
+function dynamicSort(property) {
+    var sortOrder = 1;
+    if(property[0] === "-") {
+        sortOrder = -1;
+        property = property.substr(1);
+    }
+    return function (a,b) {
+        /* next line works with strings and numbers, 
+         * and you may want to customize it to your needs
+         */
+        var result = (a[property] < b[property]) ? -1 : (a[property] > b[property]) ? 1 : 0;
+        return result * sortOrder;
+    }
+}
+function sortItems(key,data){
+	
+	let newArrayDataOfOjbect = Object.values(data)
+	newArrayDataOfOjbect.sort(dynamicSort(key))
+	return newArrayDataOfOjbect
+}
+	

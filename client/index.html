@@ -48,14 +48,15 @@
       <a href="#Misc">Misc</a>
     </div>
   </div>
-  <div class="dropdown hide">
+  <div class="dropdown">
   <button onclick="clickSort()" class="dropbtn">Sort By</button>
     <div id="sort" class="dropdown-content">
-      <a href="#date">newest</a>
-      <a href="#date-old">oldest</a>
-      <a href="#popular">Most Downloaded</a>
-      <a href="#rated">Highest Rated</a>
-      <a href="#random">Random</a>
+      <button onclick="sortGrid('newest')">newest</button>
+      <button onclick="sortGrid('oldest')">oldest</button>
+      <button onclick="sortGrid('name')">Name</button>
+      <!--button onclick="sortGrid('')">Most Downloaded</a>
+      <button onclick="sortGrid(this)">Highest Rated</a-->
+      <button onclick="sortGrid('random')">Random</a>
     </div>
   </div>
   <div class="dropdown">
@@ -106,11 +107,16 @@
   
 <!-- upload forms-->
   <div class="uploadForm1 main hide" id="uploadStep1">
-	<h3 class="uploadStepTitle">Sumbit .mcstructure file</h3>
+	
+	<h3 class="uploadStepTitle">Upload .mcstructure file/files</h3>
 	<div>        
       <input type="file" id="fileUpload" multiple accept=".mcstructure">  </input>  
     </div>    
 	<div class="uploadExplanationStep">Please upload a .mcstructure file exported from minecraft bedrock edition. The file must contain data (a bug in minecraft/onedrive some times makes empty files)</div>
+	<div class="uploadExplanationStep">If more than 1 file is uploaded all files are converted and combined into 1 pack. The files are then selected using the nametag feature in minecraft.</div>
+	<div class="uploadExplanationStep">After uploading the files you will have the option to upload a thumbnail, give it a title, embed a youtube video, and give the pack a description</div>
+	<div class="uploadExplanationStep">The Structura files will be automatically generated and you will not have to input aditional information to complete your post.</div>
+	<div class="uploadExplanationStep">Exchanging the structure file is not currently supported, however files you own can be permanently deleted from the website  and re-posted.</div>
     <div> 
       <button onclick="uploadMcstructure()">Submit</button>    
     </div> 
@@ -120,22 +126,26 @@
   <!-- Edit Item -->
   <div class="editItem main hide" id="editItem">
 	<div >
-		<h3>Title: </h3>
+		<h3 class="EditTitle">Title: </h3>
 		<input type="text" id="editTitle"> </input>
 	</div>
     <div class="editThumnail">
-		<h4>Thumbnails</h4>
+		<h4>Thumbnail:</h4>
 		<div class="gallery" id="gallery">
 			<img class="itemImg" id="editThumnail" onerror="noImage(this)" ></img>
 		</div>
-		<div>
+		<div class="rightGallery">
+			<div> <b>Thumbnail Image</b>: </div>
 			<input type="file" id="thumbnailUpload" accept=".png"> 
+			<div> <b>Youtube Link</b>(replaces thumbnails): </div>
+			<input type="text" class="linkEntry" id="setYoutubeLink"> </input>
+			<div class="uploadExplanationStep">The thumbnail will be what is displayed to users when they arrive at your post and when they are browsing the grid. If a youtube link is provided it will overwrite the images in both places.</div>
 		</div>
-		<div> <b>Youtube Link</b>(replaces thumbnails): </div>
-		<input type="text" class="linkEntry" id="setYoutubeLink"> </input>
+		
 	</div>
 	<div>
 		<h4>Category: </h4>
+		<div class="uploadExplanationStep">A category will enable people to browse for your file. A default category of MISC is assigned.</div>
 		<select id="editCategory">
 			<option value="Farms">Farms</option>
 			<option value="Buildings">Buildings</option>
@@ -151,10 +161,13 @@
 	</div>
 	<div>
 		<h4>Description: </h4>
+		<div class="uploadExplanationStep">The description will be used to explain how to use the file to your viewers. This section will also be indexed for searching the page</div>
 		<textarea id="editDescription" class="paragraphEntry" rows="5"></textarea>
 	</div>
-	<div>
-		<input type="checkbox" id="editVisibility">Show to Public:</input>
+	<div>	
+		<h4>Visiblity: </h4>	
+		<div class="uploadExplanationStep">By default, files are private and only shown to you. if you wish to share these files publicly please enable "show to public"</div>
+		<b>Show to Public:</b><input type="checkbox" id="editVisibility"></input>
 	</div>
 	<div>
 		<button onclick="submitItemEdit()"> Submit </button>
