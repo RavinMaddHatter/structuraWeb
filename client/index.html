@@ -63,9 +63,16 @@
 	<button onclick="uploadButton()" class="dropbtn">Upload</button>
   </div>
 </div>
+  <div class="HeadText main hide" id="homeText">
+	<h2>Welcome</h2>
+	<div>Structura Lab is a place to find, share, and make structura files. For a walk through on how this site works see the video below:</div>
+	<iframe class="itemyoutube" id="youtubeEmbed" src="https://www.youtube.com/embed/zFWi_NNvUf4"></iframe>
+	<div>Structura is Free and Open source, The structura Desktop app allows you more flexiblity than the web interface. For more information about Structura check out the following links:</div>
+	<div><a href="https://github.com/RavinMaddHatter/Structura">Structura Git Hub</a></div>
+	<div><a href="https://github.com/RavinMaddHatter/Structura/releases">Structura Desktop App</a></div>
+	<div><a href="https://www.youtube.com/watch?v=HwkI8KhWGbs&list=PL0bqDM9nfA12TYSz2m6i8FDTOlWGxiz4d">Structura Youtube Playlist</a></div>
 
-  
-  
+  </div>  
   <div class="main hide" id="itemPage">
 	<div class="splash" id="splash">
 		<h1 id="itemName"></h1>
@@ -167,7 +174,7 @@
 	<div>	
 		<h4>Visiblity: </h4>	
 		<div class="uploadExplanationStep">By default, files are private and only shown to you. if you wish to share these files publicly please enable "show to public"</div>
-		<b>Show to Public:</b><input type="checkbox" id="editVisibility"></input>
+		<b>Show to Public:</b><input type="checkbox" name="editVisibility" id="editVisibility"></input>
 	</div>
 	<div>
 		<button onclick="submitItemEdit()"> Submit </button>
@@ -179,16 +186,16 @@
 	<div class="LoginForm__title">Change Password</div>
 	  <form class="LoginForm__form" id = "changePasswordForm">
 		<div>
-		  <label class="Control__label" for="password">Old Password</label>
-		  <input class="Control__input" name="password" type="password" placeholder="Password" id="oldPass"/>
+		  <label class="Control__label" for="oldPass">Old Password</label>
+		  <input class="Control__input" name="oldPass" id="oldPass" type="password" placeholder="Password"/>
 		</div>
 		<div>
-		  <label class="Control__label" for="password">New Password</label>
-		  <input class="Control__input" name="password" type="password" placeholder="Password" id="changePass"/>
+		  <label class="Control__label" for="changePass">New Password</label>
+		  <input class="Control__input" name="changePass" id="changePass" type="password" placeholder="Password"/>
 		</div>
 		<div>
-		  <label class="Control__label" for="passConf">Confirm New Password</label>
-		  <input class="Control__input" name="passConf" type="password" placeholder="Password" id="changePassConf"/>
+		  <label class="Control__label" for="changePassConf">Confirm New Password</label>
+		  <input class="Control__input" name="changePassConf" id="changePassConf" type="password" placeholder="Password"/>
 		</div>
 		<div id="changeProblems"></div>
 		<div class= "buttonHolder">
@@ -202,11 +209,11 @@
 	  <form class="LoginForm__form" id = "loginForm">
 		 <div class="Control">
 		    <label class="Control__label" for="user">User</label>
-		    <input class="Control__input" type="text" placeholder="User" id="loginUser"/>
+		    <input class="Control__input" name="user" id="user" type="text" placeholder="User" autocomplete="on"/>
 		  </div>
 		  <div>
-			<label class="Control__label" for="password">Password</label>
-			<input class="Control__input" type="password" placeholder="Password" id="loginPass"/>
+			<label class="Control__label" for="loginPass">Password</label>
+			<input class="Control__input" name="loginPass" id="loginPass" type="password" placeholder="Password" autocomplete="on"/>
 		  </div>
 		  <div class= "buttonHolder">
 		  <input class="Control__input" type="submit" value="Login" />
@@ -226,19 +233,19 @@
 	  <form class="LoginForm__form" id = "signupForm">
 		<div class="Control">
 		  <label class="Control__label" for="user">User</label>
-		  <input class="Control__input" id="user" type="text" placeholder="User" id = "user"/>
+		  <input class="Control__input" name="user" id="user" type="text" placeholder="User" autocomplete="on"/>
 		</div>
 		<div>
 		  <label class="Control__label" for="email">Email Address</label>
-		  <input class="Control__input" name="email" type="email" placeholder="Email" id="email"/>
+		  <input class="Control__input" name="email" id="email" type="email" placeholder="Email" autocomplete="on"/>
 		</div>
 		<div>
-		  <label class="Control__label" for="password">Password</label>
-		  <input class="Control__input" name="password" type="password" placeholder="Password" id="pass"/>
+		  <label class="Control__label" for="pass">Password</label>
+		  <input class="Control__input" name="pass" id="pass" type="password" placeholder="Password"/>
 		</div>
 		<div>
 		  <label class="Control__label" for="passConf">Confirm Password</label>
-		  <input class="Control__input" name="passConf" type="password" placeholder="Password" id="passConf"/>
+		  <input class="Control__input" name="passConf" id="passConf" type="password" placeholder="Password"/>
 		</div>
 		<div id="problems"></div>
 		<div class= "buttonHolder">
@@ -252,13 +259,13 @@
 	  <div id="emailConfirmMsg"></div>
 	  <form class="LoginForm__form" id = "confirmForm">
 		<div class="Control">
-		  <label class="Control__label" for="confirmation">Confirmation</label>
-		  <input class="Control__input" type="text" placeholder="number" id = "conf"/>
+		  <label class="Control__label" for="conf">Confirmation</label>
+		  <input class="Control__input" name = "conf" id = "conf" type="text" placeholder="number"/>
 		</div>
 		<div id="problems"></div>
 		<div class= "buttonHolder">
 		  <input class="control__submit" type="submit" value="Submit" />
-		  <input class="control__submit" type="submit" value="Resend" />
+		  <input class="control__submit" type="button" value="Resend" />
 		</div>
 	  </form>
 	</div>
@@ -267,11 +274,11 @@
 	  <div id="emailConfirmMsg"></div>
 	  <form class="LoginForm__form" id = "resetPasswordForm1">
 		<div class="Control">
-		  <label class="Control__label" for="confirmation">username</label>
-		  <input class="Control__input" type="text" placeholder="username" id = "resetUsername"/>
+		  <label class="Control__label" for="resetUsername">username</label>
+		  <input class="Control__input" name = "resetUsername" id = "resetUsername" type="text" placeholder="username"/>
 		</div>
 		<div class= "buttonHolder">
-		  <input class="control__submit" type="submit" value="Submit" />
+		  <input class="control__submit" type="submitsubmitsubmit" value="Submit" />
 		  <!--input class="control__submit" type="submit" value="Resend" /-->
 		</div>
 	  </form>
@@ -281,16 +288,16 @@
 	  <div id="emailConfirmMsg"></div>
 	  <form class="LoginForm__form" id = "resetPasswordForm">
 		<div class="Control">
-		  <label class="Control__label" for="confirmation">Reset Code</label>
-		  <input class="Control__input" type="text" placeholder="number" id = "resetCode"/>
+		  <label class="Control__label" for = "resetCode">Reset Code</label>
+		  <input class="Control__input" name = "resetCode" id = "resetCode" type="text" placeholder="number"/>
 		</div>
 		<div>
-		  <label class="Control__label" for="password">Password</label>
-		  <input class="Control__input" name="password" type="password" placeholder="Password" id="resetpass"/>
+		  <label class="Control__label" for="resetpass">Password</label>
+		  <input class="Control__input" name="resetpass" id="resetpass" type="Password" placeholder="Password"/>
 		</div>
 		<div>
-		  <label class="Control__label" for="passConf">Confirm Password</label>
-		  <input class="Control__input" name="passConf" type="password" placeholder="Password" id="resetpassConf"/>
+		  <label class="Control__label" for= "resetpassConf">Confirm Password</label>
+		  <input class="Control__input" name="resetpassConf" id="resetpassConf" type="Password" placeholder="Password"/>
 		</div>
 		<div id="problemsreset"></div>
 		<div class= "buttonHolder">

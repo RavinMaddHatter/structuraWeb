@@ -76,6 +76,8 @@ function load(){
 			break;
 		case "#"://home/default
 		case ""://home/default
+			document.getElementById("homeText").classList.add("show")
+			document.getElementById("homeText").classList.remove("hide")
 			metaTitle = "Structura Lab"
 			Description.setAttribute("content",defaultDescription)
 			getBulkItemData("default",previousEndKey);
@@ -381,7 +383,6 @@ function sortGrid(key){
 	clearChildElements(document.getElementById("grid"));//clears the grid elements
 	setupGrid(sortedItems)
 	for (let i = 0; i < sortedItems.length; i++) {
-		console.log(sortedItems[i])
 		addElement(sortedItems[i]);
 	}
 }
@@ -597,6 +598,7 @@ function signUp(email, password, usr) {
 		showElement(document.getElementById("confirmDiv"));
 	});
 }
+
 let changePassForm = document.getElementById("changePasswordForm");
 changePassForm.addEventListener("submit", (e) => {
 	e.preventDefault();
@@ -626,6 +628,7 @@ let loginForm = document.getElementById("loginForm");
 loginForm.addEventListener("submit", (e) => {
 	e.preventDefault();
 	let usr = document.getElementById("loginUser").value;
+	usr=usr.replace(/\s/g,'')
 	let pass = document.getElementById("loginPass").value;
 	login(usr,pass);
 	
@@ -637,6 +640,9 @@ signupForm.addEventListener("submit", (e) => {
 	let pass = document.getElementById("pass").value;
 	let passConf = document.getElementById("passConf").value;
 	let email = document.getElementById("email").value;
+	if (!validateUsername){
+		document.getElementById("problems").innerText = "username cannot contains blank spaces such as tabs, returns or line breaks"
+	}
 	if(!validatePassword(pass)){
 		document.getElementById("problems").innerText = "Password must be atleast 8 charaters and contain: upper case, lower case, number and special character"
 		return
@@ -1020,4 +1026,6 @@ function sortItems(key,data){
 	newArrayDataOfOjbect.sort(dynamicSort(key))
 	return newArrayDataOfOjbect
 }
-	
+function validateUsername(usrName){
+	return /\s/g.test(usrName);
+}
