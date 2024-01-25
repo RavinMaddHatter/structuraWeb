@@ -314,7 +314,7 @@ function getSignedS3Urls(callback,fileNameList,jwtoken){
 }
 
 function fixThumnailSize(jwtoken){
-	const guid = window.location.href.split("/")[-2]
+	const guid = window.location.href.split("/").slice(-2, -1)[0]
 	fetch(apiUrl, {
 		method: 'POST',
 		headers: {page:"resizeimages",filter:guid,
@@ -323,7 +323,7 @@ function fixThumnailSize(jwtoken){
 	})
 	.then(response => response.json())
 	.then(response => {
-		const guid = window.location.href.split("/")[-2]
+		const guid = window.location.href.split("/").slice(-2, -1)[0]
 		document.getElementById("gallery").src = "https://s3.us-east-2.amazonaws.com/structuralab.com/"+guid+"/fullSizedPicture.png?t=" + new Date().getTime();
 	})
 }
@@ -342,7 +342,7 @@ function fixIconSize(jwtoken){
 }
 
 function makeStructura(jwtoken){
-	const guid = window.location.href.split("/")[-2]
+	const guid = window.location.href.split("/").slice(-2, -1)[0]
 	fetch(structuraURL, {
 		method: 'POST',
 		headers: {
@@ -353,14 +353,14 @@ function makeStructura(jwtoken){
 	.then(response => response.json())
 	.then(response => {
 		cachedItems={}
-		let hashArray = window.location.href.split("/")[-2];//double hashed items for things like user/items lookups
+		let hashArray = window.location.href.split("/").slice(-2, -1)[0];//double hashed items for things like user/items lookups
 		delete cachedItems[hashArray[2]]
 		getItemData(hashArray[2])
 	})
 }
 
 function deleteItem(jwtoken){
-	const guid  = window.location.href.split("/")[-2]
+	const guid  = window.location.href.split("/").slice(-2, -1)[0]
 	fetch(apiUrl, {
 		method: 'POST',
 		headers: {page:"deleteitem",filter:guid,token:jwtoken}
@@ -409,7 +409,7 @@ function postEdit(jwtoken){
 	itemData.visibility = document.getElementById("editVisibility").checked 
 	itemData.category = document.getElementById("editCategory").value
 	itemData.youtubelink = document.getElementById("setYoutubeLink").value 
-	const guid = window.location.href.split("/")[-2]
+	const guid = window.location.href.split("/").slice(-2, -1)[0]
 	console.log(guid)
 	itemData=JSON.stringify(itemData)
 	fetch(apiUrl, {
