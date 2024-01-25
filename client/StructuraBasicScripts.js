@@ -149,8 +149,11 @@ function makeItemPage(item){
 		}
 	}
 	if("youtube" in item && item["youtube"].length>0){
-		const videoguid = item["youtube"].split("/").pop()
-		const youtubeLink = "https://www.youtube.com/embed/"+videoguid
+		let videoguid = item["youtube"].split("/").pop()
+		videoguid = videoguid.split("v=").pop()
+		videoguid = videoguid.split("&").shift()
+		console.log(videoguid)
+		youtubeLink = "https://www.youtube.com/embed/"+videoguid
 		
 		document.getElementById("youtubeEmbed").src=youtubeLink
 		document.getElementById("youtubeEmbed").classList.add("showinline")
@@ -222,7 +225,7 @@ function makeItemPage(item){
 	itemStacksH.innerText = "Stacks Items\n(round up)";
 	let itemShulkersH = document.createElement("h4");
 	itemShulkersH.classList.add("itemCountH");
-	itemShulkersH.innerText = "Stacks Items\n(round up)";
+	itemShulkersH.innerText = "Shulkers\n(round up)";
 	
 	document.getElementById("materialsList").appendChild(itemNameH);
 	document.getElementById("materialsList").appendChild(itemCountH);
@@ -309,6 +312,7 @@ function addElement(data){
 	profileName.href = "#profile#"+data["Creator"]
 	profileName.innerText = data["Creator"].slice(0,25)	;
 	let itemName = document.createElement("a")
+	//itemName.href = "https://structuralab.com/"+data["GUID"]+"/item.html"
 	itemName.href = "#item#"+data["GUID"]
 	itemName.classList.add("itemNameGrid")
 	itemName.innerText = data["Name"].slice(0,40)	
@@ -316,7 +320,9 @@ function addElement(data){
 	let itemLink = document.createElement("a");
 	let itemImg = document.createElement("img");
 	if("youtube" in data && data["youtube"].length>0){
-		const videoguid = data["youtube"].split("/").pop()
+		let videoguid = data["youtube"].split("/").pop()
+		videoguid = videoguid.split("v=").pop()
+		videoguid = videoguid.split("&").shift()
 		const youtubeThumb = "https://img.youtube.com/vi/"+videoguid+"/0.jpg"
 		itemImg.src = youtubeThumb
 	}
@@ -551,7 +557,7 @@ function hideMain(){//reset web page to a default state to enable loading
 function clearForms(){//reset all form values to empty
 	let inputs = document.getElementsByTagName('input');
 	for (index = 0; index < inputs.length; ++index) {
-		if(inputs[index].type!="submit"){
+		if(inputs[index].type!="submit"&&inputs[index].type!="button"){
 			inputs[index].value="";
 		}
 	}	

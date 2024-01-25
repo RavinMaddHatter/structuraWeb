@@ -166,6 +166,9 @@ body {
   position: relative;
   display: inline-block;
 }
+.dropdown a {
+  text-decoration: none;
+ }
 
 .dropdown-content {
   display: none;
