@@ -128,7 +128,7 @@ function clearChildElements(hostElement){//Removes all childern from element
 	}
 }
 function hideMain(){//reset web page to a default state to enable loading
-	clearForms();//removes all default entry data from forms
+	//clearForms();//removes all default entry data from forms
 	var elements = document.getElementsByClassName("main");
     for (let i = 0; i < elements.length; i++) {
       var element = elements[i];
@@ -246,9 +246,6 @@ function checkLogin(){
 	credentials.user = cognitoUser;
 	username = cognitoUser.username
 	creator=document.getElementById("itemProfile").innerText
-	console.log(username=creator)
-	console.log(username)
-	console.log(creator)
 	if (username=creator){
 		document.getElementById("editPageButtonDiv").classList.add("show")
 		document.getElementById("editPageButtonDiv").classList.remove("hide")
@@ -343,6 +340,7 @@ function fixIconSize(jwtoken){
 
 function makeStructura(jwtoken){
 	const guid = window.location.href.split("/").slice(-2, -1)[0]
+	console.log(guid)
 	fetch(structuraURL, {
 		method: 'POST',
 		headers: {
@@ -352,10 +350,7 @@ function makeStructura(jwtoken){
 	})
 	.then(response => response.json())
 	.then(response => {
-		cachedItems={}
-		let hashArray = window.location.href.split("/").slice(-2, -1)[0];//double hashed items for things like user/items lookups
-		delete cachedItems[hashArray[2]]
-		getItemData(hashArray[2])
+		reload()
 	})
 }
 
@@ -431,6 +426,19 @@ function postEdit(jwtoken){
 		completeEditing()
 	})
 }
+function completeEditing(){
+	hideMain()
+	reload()
+}
+var reloadReady=false
+function reload(){
+	if(reloadReady){
+		location.reload()
+		return
+	}
+	reloadReady=true
+}
+
 //public data fetches 
 function getItemData(itemGuid){//gets item data if and only if the data isnt cached
 	let item={}

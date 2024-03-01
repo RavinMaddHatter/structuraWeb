@@ -1,3 +1,11 @@
+@font-face {
+  font-family: minecraftBold;
+  src: url(Minecraft-Bold.woff);/* https://blogfonts.com/minecraft-1.font*/
+}
+@font-face {
+  font-family: minecraftNormal;
+  src: url(Minecraft-Regular.woff);/* https://blogfonts.com/minecraft-1.font*/
+}
 :root {
   --headder-color: #333;
   --header-text: #f2f2f2;
@@ -9,10 +17,15 @@
   --mid-header-text: white;
   --border-color:#333;
 }
-
+h1{
+	font-family: minecraftBold;
+}
+h2{
+	font-family: minecraftBold;
+}
 * {
   box-sizing: border-box;
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: minecraftNormal;
 }
 
 body {
@@ -23,6 +36,7 @@ body {
 .headText{
 	display:inline-block;
 	width:75%;
+	height:50%;
 	float:left;
 	vertical-align: top;
 }
@@ -295,7 +309,13 @@ background-color: #ddd;
 .itemImg{
 	width:100%;	
 }
-.itemyoutube{
+.youtubeSplash{
+	height:33vh;
+	width:auto;
+	display:block;
+	margin: 0 auto;
+	aspect-ratio:16/9;
+}.itemyoutube{
 	width:100%;	
 	aspect-ratio:16/9;
 }
@@ -404,9 +424,13 @@ background-color: #ddd;
 }
 .HeadText{
 	width:90%;
+	
 	margin-left: auto;
     margin-right: auto;
 	
+}
+.headCenter{
+	text-align: center;
 }
 .footer { 
 	background-color: var(--headder-cover);

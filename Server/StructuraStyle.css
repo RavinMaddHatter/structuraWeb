@@ -291,7 +291,11 @@ background-color: #ddd;
 }
 
 .itemImg{
+	height:30%;	
+}
+.splashYoutube{
 	width:100%;	
+	aspect-ratio:16/9;
 }
 .itemyoutube{
 	width:100%;	

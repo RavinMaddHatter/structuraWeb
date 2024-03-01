@@ -56,6 +56,10 @@ function load(){
 		case "#Misc":
 			metaTitle = "Structura Lab: Miscellaneous Stuff"
 			Description.setAttribute("content","A collection of Structura files for you to discover. ")
+		case "#uploadInProgress":
+			previousPage="upload"
+			showElement(document.getElementById("uploadInProgress"));;
+			break;
 		case "#data"://not implemented
 		case "#date-old"://not implemented
 		case "#popular"://not implemented
