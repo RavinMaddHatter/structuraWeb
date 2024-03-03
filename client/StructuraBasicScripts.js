@@ -16,16 +16,26 @@ var fileUploadObjects={}//place holder for items being uploaded during callbacks
 var previousPage=""//holds the previous hash for during login events
 var metaTitle = document.querySelector('title').textContent//title of SEO purpases
 var Description = document.getElementById("metaDescription")//Description handle for SEO purposes
+var pageType = ""
 // check if user is logged in
 checkLogin();//verifies user login state to keep experience uniform
 // begin loading website
-load();//Check hash and start loading website
-
+initialLoad();//Check hash and start loading website
+function initialLoad(){
+	let path = window.location.pathname;
+	let page = path.split("/").pop().replace(".html","");
+	pageType="#"+page
+	console.log(pageType)
+	if (window.location.hash.length>2){
+		pageType = window.location.hash.length
+	}
+	load()
+}
 //Processing Hash information
 function load(){
 	hideMain();
 	pagenum=0;
-	switch(window.location.hash){
+	switch(pageType){
 		case "#Farms":
 			metaTitle = "Structura Lab: Farms"
 			Description.setAttribute("content","A collection of Minecraft Bedrock Farm Structura files. Browse for your favorite farms.")
@@ -56,17 +66,17 @@ function load(){
 		case "#Misc":
 			metaTitle = "Structura Lab: Miscellaneous Stuff"
 			Description.setAttribute("content","A collection of Structura files for you to discover. ")
-		case "#uploadInProgress":
-			previousPage="upload"
-			showElement(document.getElementById("uploadInProgress"));;
-			break;
 		case "#data"://not implemented
 		case "#date-old"://not implemented
 		case "#popular"://not implemented
 		case "#rated"://not implemented
 		case "#random"://not implemented
-			previousPage=window.location.hash
-			getBulkItemData(window.location.hash,previousEndKey);
+			previousPage=pageType
+			getBulkItemData(pageType,previousEndKey);
+			break;
+		case "#uploadInProgress":
+			previousPage="upload"
+			showElement(document.getElementById("uploadInProgress"));;
 			break;
 		case "#TOS":
 			metaTitle = "Structura Lab: Terms Of Service"
@@ -99,7 +109,7 @@ function load(){
 		case "#userprofile":
 			metaTitle = "Structura Lab: Your Profile"
 			Description.setAttribute("content","Edit your profile")
-			previousPage=window.location.hash
+			previousPage="#userprofile"
 			loadUserProfilePage();
 			break;
 		case "#signout":
@@ -110,14 +120,14 @@ function load(){
 		case "#upload":
 			metaTitle = "Structura Lab: Upload New"
 			Description.setAttribute("content","Upload a new file")
-			previousPage=window.location.hash
+			previousPage="#upload"
 			showElement(document.getElementById("uploadStep1"),checkLogin=true);
 			break;
 		default://processing fall through. particulary double hashed items
 			metaTitle = "Structura Lab"
 			Description.setAttribute("content",defaultDescription)
 			previousPage=""
-			processHash(window.location.hash);
+			processHash(pageType);
 			break;
 	}
 }
@@ -261,6 +271,7 @@ function addItemToMatlist(key,value){
 }
 //Event Listeners
 window.onhashchange = function(){//checks if the hash has changed to refresh user views
+	pageType=window.location.hash
 	load();//determine what should happen on this hash refreshe
 }
 window.onclick = function(event) {//clicking the dropdowns
@@ -296,6 +307,7 @@ function setupGrid(items){
 		cachedItems[items[i]["GUID"]]=items[i]
 		addElement(items[i]);
 	}
+	
 }
 
 function addElement(data){
@@ -380,6 +392,9 @@ function sortGrid(key){
 		case 'newest':
 			sortedItems = sortItems("Date",cachedItems)
 			break;
+		case 'rank':
+			sortedItems = sortItems("rank",cachedItems).reverse();
+			break;
 		case 'name':
 			sortedItems = sortItems("Name",cachedItems).reverse();
 			break;
@@ -389,6 +404,9 @@ function sortGrid(key){
 		case 'random':
 			sortedItems = Object.values(cachedItems).sort( () => .5 - Math.random() );
 			break;
+		default:
+			sortedItems = sortItems("rank",cachedItems).reverse()
+			
 	}
 	clearChildElements(document.getElementById("grid"));//clears the grid elements
 	setupGrid(sortedItems)
@@ -416,6 +434,7 @@ function submitItemEdit(){
 	getToken(makeStructura)
 }
 function editItemButton(){
+	//Needs work
 	const guid = window.location.hash.split("#")[2]
 	window.location.hash="#edititem#"+guid
 }
@@ -436,6 +455,7 @@ function uploadButton(){
 	window.location.hash = '#login';
 }
 function uploadMcstructure(){
+	window.location.hash = "#uploadInProgress"
 	let files = document.getElementById('fileUpload').files;
 	if(files){
 		fileUploadObjects={}
@@ -463,7 +483,7 @@ function uploadMcstructure(){
 }
 //navigation and show functions 
 function goHome(){
-	window.location.hash="";
+	window.location.href="https://structuralab.com";
 }
 function showElement(element,checkLogin=false){
 	hideMain();
@@ -477,6 +497,7 @@ function showElement(element,checkLogin=false){
 }
 
 function completeEditing(){
+	//needs work
 	const guid = window.location.hash.split("#")[2]
 	window.location.hash="#item#"+guid
 }
@@ -1011,7 +1032,8 @@ function getBulkItemData(page_value,filter_value){//
 	})
 	.then(response => response.json())
 	.then(response => {
-		setupGrid(response["items"])
+		cachedItems=response["items"]
+		sortGrid("rank")
 	})
 }
 
@@ -1034,6 +1056,12 @@ function sortItems(key,data){
 	
 	let newArrayDataOfOjbect = Object.values(data)
 	newArrayDataOfOjbect.sort(dynamicSort(key))
+	for(let i of newArrayDataOfOjbect){
+		if(i["GUID"]=="7cb41d1f-4966-44ae-8b80-50fd67644c19"){
+			console.log(i["rank"])
+		}
+	}
+	//console.log(newArrayDataOfOjbect)
 	return newArrayDataOfOjbect
 }
 function validateUsername(usrName){
