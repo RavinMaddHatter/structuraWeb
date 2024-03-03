@@ -67,12 +67,13 @@
 		<div class="editItem main hide" id="editItem">
 			<div>
 				<h3 class="EditTitle">Title: </h3>
-				<input type="text" id="editTitle" value={title}> </input>
+				<input type="text" id="editTitle" value="{title}"> </input>
 			</div>
 			<div class="editThumnail">
 				<h4>Thumbnail:</h4>
 				<div class="gallery" id="gallery">
-					<img class="itemImg" id="editThumnail" onerror="noImage(this)" src={thumbURL}></img>
+					<img class="itemImg {showThumb}" id="itemImg" onerror="noImage(this)" {thumbURL}></img>
+					<iframe class="itemyoutube {showYoutube}" id="youtubeEmbed" src = "https://www.youtube.com/embed/{youtubeID}"></iframe>
 				</div>
 				<div class="rightGallery">
 					<div> <b>Thumbnail Image</b>: </div>
@@ -85,17 +86,17 @@
 			<div>
 				<h4>Category: </h4>
 				<div class="uploadExplanationStep">A category will enable people to browse for your file. A default category of MISC is assigned.</div>
-					<select id="editCategory" value="{category}">
-						<option value="Farms">Farms</option>
-						<option value="Buildings">Buildings</option>
-						<option value="Terrain">Terrain</option>
-						<option value="Villager">Villager Tech</option>
-						<option value="Storage">Storage</option>
-						<option value="Flying">Flying Machines</option>
-						<option value="Furnaces">Furnaces</option>
-						<option value="Redstone">Redstone</option>
-						<option value="Statues">Statues</option>
-						<option value="Misc">Misc</option>
+					<select id="editCategory" >
+						<option value="Farms" {farmSel}>Farms</option>
+						<option value="Buildings" {buildSel}>Buildings</option>
+						<option value="Terrain" {terSel}>Terrain</option>
+						<option value="Villager" {vilSel}>Villager Tech</option>
+						<option value="Storage" {storSel}>Storage</option>
+						<option value="Flying" {flySel}>Flying Machines</option>
+						<option value="Furnaces" {furnSel}>Furnaces</option>
+						<option value="Redstone" {redSel}>Redstone</option>
+						<option value="Statues" {staSel}>Statues</option>
+						<option value="Misc" {miscSel}>Misc</option>
 					</select>
 			</div>
 			<div>
@@ -106,7 +107,7 @@
 			<div>
 				<h4>Visiblity: </h4>	
 				<div class="uploadExplanationStep">By default, files are private and only shown to you. if you wish to share these files publicly please enable "show to public"</div>
-				<b>Show to Public:</b><input type="checkbox" name="editVisibility" id="editVisibility"value={visiblity}></input>
+				<b>Show to Public:</b><input type="checkbox" name="editVisibility" id="editVisibility" {visiblity}></input>
 			</div>
 			<div>
 				<button onclick="submitItemEdit()"> Submit </button>
@@ -117,8 +118,8 @@
 			<div class="splash" id="splash">
 				<h1 id="itemName">{title}</h1>
 				<div class="gallery" id="gallery">
-					<img class="itemImg {showThumb}" id="itemImg" onerror="noImage(this)" src={thumbURL}></img>
-					<iframe class="itemyoutube {showYoutube}" id="youtubeEmbed"></iframe>
+					<img class="itemImg {showThumb}" id="itemImg" onerror="noImage(this)" {thumbURL}></img>
+					<iframe class="itemyoutube {showYoutube}" id="youtubeEmbed" src = "https://www.youtube.com/embed/{youtubeID}"></iframe>
 				</div>
 				<div class="brief" id="brief">
 					<h3>Creator</h3>

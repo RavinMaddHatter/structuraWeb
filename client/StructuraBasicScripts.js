@@ -25,9 +25,8 @@ function initialLoad(){
 	let path = window.location.pathname;
 	let page = path.split("/").pop().replace(".html","");
 	pageType="#"+page
-	console.log(pageType)
 	if (window.location.hash.length>2){
-		pageType = window.location.hash.length
+		pageType = window.location.hash
 	}
 	load()
 }
@@ -35,6 +34,9 @@ function initialLoad(){
 function load(){
 	hideMain();
 	pagenum=0;
+	if (window.location.hash.length>2){
+		pageType = window.location.hash
+	}
 	switch(pageType){
 		case "#Farms":
 			metaTitle = "Structura Lab: Farms"
@@ -332,7 +334,7 @@ function addElement(data){
 	profileName.innerText = data["Creator"].slice(0,25)	;
 	let itemName = document.createElement("a")
 	//itemName.href = "https://structuralab.com/"+data["GUID"]+"/item.html"
-	itemName.href = "#item#"+data["GUID"]
+	itemName.href = "https://structuralab.com/"+data["GUID"]+"/item"+data["edits"].toFixed(0)+".html"
 	itemName.classList.add("itemNameGrid")
 	itemName.innerText = data["Name"].slice(0,40)	
 	let imgContainer = document.createElement("div");
@@ -350,7 +352,7 @@ function addElement(data){
 	}
 	itemImg.setAttribute("onerror","noThumbnail(this)")
 	itemImg.classList.add("itemPicture");
-	itemLink.href="#item#"+data["GUID"]
+	itemLink.href="https://structuralab.com/"+data["GUID"]+"/item"+data["edits"].toFixed(0)+".html"
 	itemLink.classList.add("itemImgContainer")
 	itemLink.appendChild(itemImg);
 	headText.appendChild(itemName);
@@ -496,10 +498,11 @@ function showElement(element,checkLogin=false){
 	}
 }
 
-function completeEditing(){
+function completeEditing(url){
 	//needs work
-	const guid = window.location.hash.split("#")[2]
-	window.location.hash="#item#"+guid
+	//const guid = window.location.hash.split("#")[2]
+	//window.location.hash="#item#"+guid
+	winodw.location.pathname = "https://structuralab.com/"+url
 }
 function showGrid(){
 	document.getElementById("grid").classList.remove("hide")
@@ -1002,7 +1005,8 @@ function postEdit(jwtoken){
 		}else{
 			alert(response)
 		}
-		completeEditing()
+		
+		completeEditing(response["url"])
 	})
 }
 //public data fetches 

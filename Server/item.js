@@ -25,7 +25,7 @@ window.onclick = function(event) {//clicking the dropdowns
   }
 }
 //Page Generation Callbacks
-function editItemForm(item){
+/*function editItemForm(item){
 	document.getElementById("editThumnail").src = "https://s3.us-east-2.amazonaws.com/structuralab.com/"+item["GUID"]+"/thumbnail.png"
 	document.getElementById("editTitle").value = item["Name"]
 	document.getElementById("editDescription").value = item["Description"]
@@ -39,7 +39,7 @@ function editItemForm(item){
 		const youtubeThumb = "https://img.youtube.com/vi/"+videoguid+"/0.jpg"
 		document.getElementById("editThumnail").src = youtubeThumb
 	}
-}
+}*/
 // Default on error functions
 function noProfPic(element){
 	element.src='https://s3.us-east-2.amazonaws.com/structuralab.com/Profiles/Default_pfp.png'
@@ -64,6 +64,14 @@ function submitItemEdit(){
 }
 function editItemButton(){
 	hideMain()
+//	let title = document.getElementById("itemName").innerText
+//	let description = document.getElementById("description").innerText
+//	let youtubesrc = document.getElementById("youtubeEmbed").src
+//	document.getElementById("editTitle").value = title
+//	document.getElementById("editDescription").value = description
+//	document.getElementById("editCategory").value = youtubesrc
+	//document.getElementById("editVisibility").checked = item["Visible"]
+	
 	showElement(document.getElementById("editItem"));
 }
 function delteItemButton(){
@@ -121,14 +129,7 @@ function showElement(element,checkLogin=false){
 }
 
 
-//Clearing and default form functions
-function clearChildElements(hostElement){//Removes all childern from element
-	while (hostElement.firstChild) {
-		hostElement.removeChild(hostElement.lastChild);
-	}
-}
 function hideMain(){//reset web page to a default state to enable loading
-	clearForms();//removes all default entry data from forms
 	var elements = document.getElementsByClassName("main");
     for (let i = 0; i < elements.length; i++) {
       var element = elements[i];
@@ -140,14 +141,6 @@ function hideMain(){//reset web page to a default state to enable loading
       }
 	  element.classList.add('hide');
     }
-}
-function clearForms(){//reset all form values to empty
-	let inputs = document.getElementsByTagName('input');
-	for (index = 0; index < inputs.length; ++index) {
-		if(inputs[index].type!="submit"&&inputs[index].type!="button"){
-			inputs[index].value="";
-		}
-	}	
 }
 function hideDropdowns(){//hides the dropdowns for the middle navagation menue
 	var dropdowns = document.getElementsByClassName("dropdown-content");
@@ -246,10 +239,9 @@ function checkLogin(){
 	credentials.user = cognitoUser;
 	username = cognitoUser.username
 	creator=document.getElementById("itemProfile").innerText
-	console.log(username=creator)
 	console.log(username)
 	console.log(creator)
-	if (username=creator){
+	if (username==creator){
 		document.getElementById("editPageButtonDiv").classList.add("show")
 		document.getElementById("editPageButtonDiv").classList.remove("hide")
 	}
@@ -353,7 +345,7 @@ function makeStructura(jwtoken){
 	.then(response => response.json())
 	.then(response => {
 		cachedItems={}
-		let hashArray = window.location.href.split("/")[-2];//double hashed items for things like user/items lookups
+		let hashArray = window.location.href.split("/")[1];//double hashed items for things like user/items lookups
 		delete cachedItems[hashArray[2]]
 		getItemData(hashArray[2])
 	})
@@ -409,8 +401,7 @@ function postEdit(jwtoken){
 	itemData.visibility = document.getElementById("editVisibility").checked 
 	itemData.category = document.getElementById("editCategory").value
 	itemData.youtubelink = document.getElementById("setYoutubeLink").value 
-	const guid = window.location.href.split("/")[-2]
-	console.log(guid)
+	const guid = window.location.pathname.split("/")[1]
 	itemData=JSON.stringify(itemData)
 	fetch(apiUrl, {
 		method: 'POST',
@@ -428,7 +419,7 @@ function postEdit(jwtoken){
 		}else{
 			alert(response)
 		}
-		completeEditing()
+		window.location.pathname = "/"+response["url"]
 	})
 }
 //public data fetches 
@@ -445,7 +436,6 @@ function getItemData(itemGuid){//gets item data if and only if the data isnt cac
 		.then(response => {
 			item=response["item"]
 			cachedItems[item["GUID"]]=item
-			makeItemPage(item)
 		})
 	}
 }
