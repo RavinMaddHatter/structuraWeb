@@ -71,6 +71,7 @@ function load(){
 		case "#popular"://not implemented
 		case "#rated"://not implemented
 		case "#random"://not implemented
+		case "#index"://not implemented
 			previousPage=pageType
 			getBulkItemData(pageType,previousEndKey);
 			break;
@@ -298,13 +299,15 @@ function resizeGrid(size){
 }
 //Page Generation Callbacks
 
-function setupGrid(items){
+function setupGrid(items, cache=true){
 	if (Object.keys(cachedItems).length>10000){//one item averages about 1kB limiting memory use to about 10MB
 		cachedItems={}
 	}
 	resizeGrid(items.length)
 	for(var i=0; i<items.length; i++){
-		cachedItems[items[i]["GUID"]]=items[i]
+		if(cache){
+			cachedItems[items[i]["GUID"]]=items[i]
+		}
 		addElement(items[i]);
 	}
 	
@@ -390,16 +393,16 @@ function sortGrid(key){
 	let sortedItems=[]
 	switch(key){
 		case 'newest':
-			sortedItems = sortItems("Date",cachedItems)
+			sortedItems = sortItems("date",cachedItems).reverse()
 			break;
 		case 'rank':
 			sortedItems = sortItems("rank",cachedItems).reverse();
 			break;
 		case 'name':
-			sortedItems = sortItems("Name",cachedItems).reverse();
+			sortedItems = sortItems("Name",cachedItems);
 			break;
 		case 'oldest':
-			sortedItems = sortItems("Date",cachedItems).reverse();
+			sortedItems = sortItems("date",cachedItems);
 			break;
 		case 'random':
 			sortedItems = Object.values(cachedItems).sort( () => .5 - Math.random() );
@@ -409,10 +412,7 @@ function sortGrid(key){
 			
 	}
 	clearChildElements(document.getElementById("grid"));//clears the grid elements
-	setupGrid(sortedItems)
-	for (let i = 0; i < sortedItems.length; i++) {
-		addElement(sortedItems[i]);
-	}
+	setupGrid(sortedItems, cache=false)
 }
 
 function clickSort() {

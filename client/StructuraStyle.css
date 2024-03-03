@@ -311,7 +311,7 @@ background-color: #ddd;
 }
 .youtubeSplash{
 	height:33vh;
-	width:auto;
+	max-width: 100%;
 	display:block;
 	margin: 0 auto;
 	aspect-ratio:16/9;
