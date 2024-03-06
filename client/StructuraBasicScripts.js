@@ -341,9 +341,19 @@ function addElement(data){
 	let itemLink = document.createElement("a");
 	let itemImg = document.createElement("img");
 	if("youtube" in data && data["youtube"].length>0){
+		console.log(data["youtube"])
 		let videoguid = data["youtube"].split("/").pop()
-		videoguid = videoguid.split("v=").pop()
-		videoguid = videoguid.split("&").shift()
+		if(videoguid.includes("v=")){
+			videoguid = videoguid.split("v=").pop()
+		}
+		if(videoguid.includes("?")){
+			videoguid = videoguid.split("?")[0]
+		}
+		if(videoguid.includes("&")){
+			videoguid = videoguid.split("&")[0]
+		}
+		console.log(videoguid)
+		//videoguid = videoguid.split("&").shift()
 		const youtubeThumb = "https://img.youtube.com/vi/"+videoguid+"/0.jpg"
 		itemImg.src = youtubeThumb
 	}
@@ -813,7 +823,9 @@ function uploadFileBatch(headder){
 	for (const fileName in signedURLs){
 		postFile(fileUploadObjects[fileName].Body,signedURLs[fileName])
 	}
-		window.location.hash="#edititem#"+headder.guid
+	window.location.hash="#edititem#"+headder.guid
+    //for when i pull out all of the item page stuff.
+	//window.location.pathname = "https://structuralab.com/"+headder.guid+"/item1.html"
 }
 //Credentials checker using AWS Cognito Identities
 function checkLogin(){

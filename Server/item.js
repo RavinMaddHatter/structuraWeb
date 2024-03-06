@@ -239,8 +239,6 @@ function checkLogin(){
 	credentials.user = cognitoUser;
 	username = cognitoUser.username
 	creator=document.getElementById("itemProfile").innerText
-	console.log(username)
-	console.log(creator)
 	if (username==creator){
 		document.getElementById("editPageButtonDiv").classList.add("show")
 		document.getElementById("editPageButtonDiv").classList.remove("hide")
@@ -304,9 +302,11 @@ function getSignedS3Urls(callback,fileNameList,jwtoken){
 		callback(response)
 	})
 }
-
+function getGuid(){
+	return window.location.href.split("/").slice(-2, -1)[0]
+}
 function fixThumnailSize(jwtoken){
-	const guid = window.location.href.split("/")[-2]
+	const guid = getGuid()
 	fetch(apiUrl, {
 		method: 'POST',
 		headers: {page:"resizeimages",filter:guid,
@@ -315,8 +315,10 @@ function fixThumnailSize(jwtoken){
 	})
 	.then(response => response.json())
 	.then(response => {
-		const guid = window.location.href.split("/")[-2]
+		imageUploadComplete=true
+		const guid = getGuid()
 		document.getElementById("gallery").src = "https://s3.us-east-2.amazonaws.com/structuralab.com/"+guid+"/fullSizedPicture.png?t=" + new Date().getTime();
+		redirectAfterUpdate()
 	})
 }
 function fixIconSize(jwtoken){
@@ -334,7 +336,7 @@ function fixIconSize(jwtoken){
 }
 
 function makeStructura(jwtoken){
-	const guid = window.location.href.split("/")[-2]
+	const guid = getGuid()
 	fetch(structuraURL, {
 		method: 'POST',
 		headers: {
@@ -345,14 +347,14 @@ function makeStructura(jwtoken){
 	.then(response => response.json())
 	.then(response => {
 		cachedItems={}
-		let hashArray = window.location.href.split("/")[1];//double hashed items for things like user/items lookups
+		let hashArray = getGuid();//double hashed items for things like user/items lookups
 		delete cachedItems[hashArray[2]]
 		getItemData(hashArray[2])
 	})
 }
 
 function deleteItem(jwtoken){
-	const guid  = window.location.href.split("/")[-2]
+	const guid  = getGuid()
 	fetch(apiUrl, {
 		method: 'POST',
 		headers: {page:"deleteitem",filter:guid,token:jwtoken}
@@ -394,8 +396,18 @@ function postUserProfile(jwtoken){
 		}
 	})
 }
+var editComplete=false
+var imageUploadComplete=false
+var redirectURL=""
+function redirectAfterUpdate(){
+	if (editComplete && imageUploadComplete){
+		window.location.pathname = redirectURL
+	}
+}
 function postEdit(jwtoken){
 	let itemData={}
+	editComplete=false
+	imageUploadComplete=false
 	itemData.name = document.getElementById("editTitle").value
 	itemData.description = document.getElementById("editDescription").value
 	itemData.visibility = document.getElementById("editVisibility").checked 
@@ -414,12 +426,16 @@ function postEdit(jwtoken){
 			if(file){
 				postFileWithCallback(file,response["thumbnailURL"],fixThumnailSize)
 			}else{
+				imageUploadComplete=true
 				//note sucess
 			}
 		}else{
 			alert(response)
 		}
-		window.location.pathname = "/"+response["url"]
+		redirectURL = "/"+response["url"]
+		editComplete=true
+		redirectAfterUpdate()
+		//window.location.pathname = "/"+response["url"]
 	})
 }
 //public data fetches 
