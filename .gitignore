@@ -2,7 +2,3 @@
 client/amazon-cognito-identity.js
 client/amazon-cognito-identity.min.js
 client/aws-cognito-sdk.min.js
-lambdaLayer/python/*
-lambdaLayer/python_complete/*
-lambdaLayer/python.zip
-modleToMinecraftFunction/LambdaLayer/*
