@@ -6,6 +6,13 @@
   font-family: minecraftNormal;
   src: url(Minecraft-Regular.woff);/* https://blogfonts.com/minecraft-1.font*/
 }
+pre{
+    white-space: pre-wrap;       /* Since CSS 2.1 */
+    white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+    white-space: -pre-wrap;      /* Opera 4-6 */
+    white-space: -o-pre-wrap;    /* Opera 7 */
+    word-wrap: break-word;       /* Internet Explorer 5.5+ */
+}
 :root {
   --headder-color: #333;
   --header-text: #f2f2f2;
@@ -32,6 +39,9 @@ body {
   margin: 0;
   font-family: minecraftNormal;
   background-color: var(--headder-cover);
+}
+.description{
+	text-wrap:wrap;
 }
 .headText{
 	display:inline-block;
