@@ -1,7 +1,6 @@
 import trimesh
 import numpy as np
 import os
-import shutil
 import nbtlib #import LevelDatNbt as worldNBT
 from nbtlib.tag import Int, List
 from trimesh.transformations import euler_matrix
@@ -17,8 +16,8 @@ class modelConverter:
         self.pitch = self.meshdims[2]/320
     def scaleMesh(self,maxSize):
         self.pitch = max(self.meshdims)/(maxSize-1)
-    def rotate(rotx,roty,rotz):
-        HTM=a=euler_matrix(xrot*numpy.pi/180,yrot*numpy.pi/180,zrot*numpy.pi/180)
+    def rotate(self, xrot,yrot,zrot):
+        HTM=a=euler_matrix(xrot*np.pi/180,yrot*np.pi/180,zrot*np.pi/180)
         self.mesh.apply_transform(HTM)
     def makeModel(self,folder=""):
         matrix = np.array(self.mesh.voxelized(pitch=self.pitch).matrix)

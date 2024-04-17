@@ -472,3 +472,34 @@ background-color: #ddd;
 	margin-left: auto;
     margin-right: auto;
 }
+/********custom search*********/
+/***
+  --headder-color: #333;
+  --header-text: #f2f2f2;
+  --headder-cover: #ddd;
+  --footer-color: #f1f1f1;
+  --mid-headder-button-color: #1C2833;
+  --mid-headder-button-hover: #273746;
+  --middle-nav-background: #17202A;
+  --mid-header-text: white;
+  --border-color:#333;
+*/
+.gsc-control-cse{
+	background-color: var(--headder-color) !important;
+	border: 0px !important;
+}
+.gsc-search-button-v2{
+	border-color: #000 !important;
+    background-color: var(--mid-headder-button-color) !important;
+}
+.gsc-modal-background-image{
+	background-color: var(--headder-color) !important;
+}
+.gsc-results-wrapper-overlay{
+	background: var(--headder-cover) !important;
+	border:0px !important;
+}
+.gsc-webResult.gsc-result {
+	border:0px !important;
+}
+/***************/
