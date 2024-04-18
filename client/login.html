@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3005750757891844" crossorigin="anonymous"></script>
+<link rel="icon" type="image/png" href="/favicon.png"/>
+<title id="metaTitle">Structura Lab: Login</title>
+<meta name="description" id="metaDescription" content="Structura Lab: Create account, login or forgot password"></meta>
+<script src="https://s3.us-east-2.amazonaws.com/structuralab.com/aws-cognito-sdk.min.js"></script>
+<script src="https://s3.us-east-2.amazonaws.com/structuralab.com/amazon-cognito-identity.min.js"></script>
+<script src="https://sdk.amazonaws.com/js/aws-sdk-2.1.24.min.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel = "stylesheet" href="StructuraStyle.css">
+</head>
+<body>
+<div class="topnav">
+  <h2>Structura Lab</h2>
+  <div class="headLinks show" id="loginLink">
+    <a href="#login" rel="nofolow">Login</a>
+  </div>
+  <div class="headLinks hide" id="profLink">
+    <a href="#userprofile" rel="nofolow">Profile</a>
+  </div>
+  <div class="headLinks hide" id="signOutButton">
+    <a href="#signout" rel="nofolow">Sign Out</a>
+  </div>
+  <p>Your place for discovering what is possible in Minecraft Bedrock </p>
+ </div>
+
+<div class="middlenav">
+  <div class="dropdown">
+	<button onclick="goHome()" class="dropbtn">Home</button>
+  </div>
+  <div class="dropdown">
+  <button onclick="clickFilter()" class="dropbtn">Category</button>
+    <div id="filter" class="dropdown-content">
+      <a href="https://structuralab.com/Farms.html">Farms</a>
+      <a href="https://structuralab.com/Buildings.html">Buildings</a>
+      <a href="https://structuralab.com/Terrain.html">Terrain</a>
+      <a href="https://structuralab.com/Villager.html">Villager</a>
+      <a href="https://structuralab.com/Storage.html">Storage</a>
+      <a href="https://structuralab.com/Flying.html">Flying Machines</a>
+      <a href="https://structuralab.com/Furnaces.html">Furnaces</a>
+      <a href="https://structuralab.com/Redstone.html">Redstone</a>
+      <a href="https://structuralab.com/Statues.html">Statues</a>
+      <a href="https://structuralab.com/Misc.html">Misc</a>
+    </div>
+  </div>
+</div>
+<div class="content">
+<!--  Login And Account Management Stuff  -->
+  <div class="LoginForm main hide" id="changePassword">
+	<div class="LoginForm__title">Change Password</div>
+	  <form class="LoginForm__form" id = "changePasswordForm">
+		<div>
+		  <label class="Control__label" for="oldPass">Old Password</label>
+		  <input class="Control__input" name="oldPass" id="oldPass" type="password" placeholder="Password"/>
+		</div>
+		<div>
+		  <label class="Control__label" for="changePass">New Password</label>
+		  <input class="Control__input" name="changePass" id="changePass" type="password" placeholder="Password"/>
+		</div>
+		<div>
+		  <label class="Control__label" for="changePassConf">Confirm New Password</label>
+		  <input class="Control__input" name="changePassConf" id="changePassConf" type="password" placeholder="Password"/>
+		</div>
+		<div id="changeProblems"></div>
+		<div class= "buttonHolder">
+		  <input class="Control__input" type="submit">Login</input>
+		  </div>
+		</form>
+  </div>
+
+  <div class="LoginForm main show" id="loginFormDiv">
+	<h3 class="LoginForm__title">Login</h3>
+	  <form class="LoginForm__form" id = "loginForm">
+		 <div class="Control">
+		    <label class="Control__label" for="user">User</label>
+		    <input class="Control__input" name="user" id="loginUser" type="text" placeholder="loginUser" autocomplete="on"/>
+		  </div>
+		  <div>
+			<label class="Control__label" for="loginPass">Password</label>
+			<input class="Control__input" name="loginPass" id="loginPass" type="password" placeholder="Password" autocomplete="on"/>
+		  </div>
+		  <div class= "buttonHolder">
+		  <input class="Control__input" type="submit" value="Login" />
+		  </div>
+		</form>
+		<div>
+		  <a href="#signup" rel="nofolow">Sign Up</a>
+		</div>
+		<div>
+		<a href="#restpass" rel="nofolow">Forgot password</a>
+		</div>
+	</div>
+
+
+	<div class="LoginForm main hide" id="signupFormDiv">
+	  <h3 class="LoginForm__title">Sign up</h3>
+	  <form class="LoginForm__form" id = "signupForm">
+		<div class="Control">
+		  <label class="Control__label" for="user">User</label>
+		  <input class="Control__input" name="user" id="user" type="text" placeholder="User" autocomplete="on"/>
+		</div>
+		<div>
+		  <label class="Control__label" for="email">Email Address</label>
+		  <input class="Control__input" name="email" id="email" type="email" placeholder="Email" autocomplete="on"/>
+		</div>
+		<div>
+		  <label class="Control__label" for="pass">Password</label>
+		  <input class="Control__input" name="pass" id="pass" type="password" placeholder="Password"/>
+		</div>
+		<div>
+		  <label class="Control__label" for="passConf">Confirm Password</label>
+		  <input class="Control__input" name="passConf" id="passConf" type="password" placeholder="Password"/>
+		</div>
+		<div id="problems"></div>
+		<div class= "buttonHolder">
+		  <input class="control__submit" type="submit" value="Submit" />
+		</div>
+	  </form>
+	</div>
+
+	<div class="LoginForm main hide" id="confirmDiv">
+	  <h3 class="LoginForm__title">Confirm Email</h3>
+	  <div id="emailConfirmMsg"></div>
+	  <form class="LoginForm__form" id = "confirmForm">
+		<div class="Control">
+		  <label class="Control__label" for="conf">Confirmation</label>
+		  <input class="Control__input" name = "conf" id = "conf" type="text" placeholder="number"/>
+		</div>
+		<div id="problems"></div>
+		<div class= "buttonHolder">
+		  <input class="control__submit" type="submit" value="Submit" />
+		  <input class="control__submit" type="button" value="Resend" />
+		</div>
+	  </form>
+	</div>
+	<div class="LoginForm main hide" id="ResetPasswordDiv">
+	  <h3 class="LoginForm__title">Reset Password</h3>
+	  <div id="emailConfirmMsg"></div>
+	  <form class="LoginForm__form" id = "resetPasswordForm1">
+		<div class="Control">
+		  <label class="Control__label" for="resetUsername">username</label>
+		  <input class="Control__input" name = "resetUsername" id = "resetUsername" type="text" placeholder="username"/>
+		</div>
+		<div class= "buttonHolder">
+		  <input class="control__submit" type="submit" value="Submit" />
+		  <!--input class="control__submit" type="submit" value="Resend" /-->
+		</div>
+	  </form>
+	</div>
+	<div class="LoginForm main hide" id="ResetPassword2">
+	  <h3 class="LoginForm__title">Reset Password: Verification Code</h3>
+	  <div id="emailConfirmMsg"></div>
+	  <form class="LoginForm__form" id = "resetPasswordForm">
+		<div class="Control">
+		  <label class="Control__label" for = "resetCode">Reset Code</label>
+		  <input class="Control__input" name = "resetCode" id = "resetCode" type="text" placeholder="number"/>
+		</div>
+		<div>
+		  <label class="Control__label" for="resetpass">Password</label>
+		  <input class="Control__input" name="resetpass" id="resetpass" type="Password" placeholder="Password"/>
+		</div>
+		<div>
+		  <label class="Control__label" for= "resetpassConf">Confirm Password</label>
+		  <input class="Control__input" name="resetpassConf" id="resetpassConf" type="Password" placeholder="Password"/>
+		</div>
+		<div id="problemsreset"></div>
+		<div class= "buttonHolder">
+		  <input class="control__submit" type="submit" value="Submit" />
+		  <!--input class="control__submit" type="submit" value="Resend" /-->
+		</div>
+	  </form>
+	</div>
+</div>
+<div class="footer">
+	<div class="copyright">© MadHatter USA, All Rights Reserved</div>
+	<a href="https://structuralab.com/TOS.html" class="tos">Terms of Service</a>
+</div>
+</body>
+<script src="login.js"></script>
+
+</html>
