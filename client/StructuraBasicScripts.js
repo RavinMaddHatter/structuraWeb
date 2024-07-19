@@ -33,40 +33,21 @@ function initialLoad(){
 function load(){
 	hideMain();
 	pagenum=0;
+	pageType=pageType.split("&")[0]
 	if (window.location.hash.length>2){
-		pageType = window.location.hash
+		pageType = window.location.hash.split("&")[0]
 	}
+	
 	switch(pageType){
 		case "#Farms":
-			metaTitle = "Structura Lab: Farms"
-			Description.setAttribute("content","A collection of Minecraft Bedrock Farm Structura files. Browse for your favorite farms.")
 		case "#Buildings":
-			metaTitle = "Structura Lab: Buildings"
-			Description.setAttribute("content","A collection of Minecraft Bedrock Builiding Structura Files. Browse for your favorite Building Designs.")
 		case "#Terrain":
-			metaTitle = "Structura Lab: Terrain/Terraforming"
-			Description.setAttribute("content","A collection of Terraforming Structura files. Browse what others have done in their worlds")
 		case "#Villager":
-			metaTitle = "Structura Lab: Villager Tech"
-			Description.setAttribute("content","A collection of Villager bases Structura files. ")
 		case "#Storage":
-			metaTitle = "Structura Lab: Storage Systems"
-			Description.setAttribute("content","A collection of Item storage solutions for Minecraft Bedrock. Browses for your favorite Structura files.")
 		case "#Flying":
-			metaTitle = "Structura Lab: Flying Machines"
-			Description.setAttribute("content","A collection of Flying Machine Structura Files for Minecraft Bedrock Edition.")
 		case "#Furnaces":
-			metaTitle = "Structura Lab: Furnaces/Smelting Tech"
-			Description.setAttribute("content","A collection of Smelter Super Smelters, or other furnace tech for Minecraft Bedrock Edition.")
 		case "#Redstone":
-			metaTitle = "Structura Lab: Redstone Stuff"
-			Description.setAttribute("content","A collection of Redstone Structura Files for Minecraft Bedrock Edition.")
-		case "#Statues":
-			metaTitle = "Structura Lab: Statues/Decorations"
-			Description.setAttribute("content","A collection of Statues, Monuements, and other decorations for Minecraft Bedrock Edition")
 		case "#Misc":
-			metaTitle = "Structura Lab: Miscellaneous Stuff"
-			Description.setAttribute("content","A collection of Structura files for you to discover. ")
 		case "#data"://not implemented
 		case "#date-old"://not implemented
 		case "#popular"://not implemented
@@ -76,10 +57,10 @@ function load(){
 			previousPage=pageType
 			getBulkItemData(pageType,previousEndKey);
 			break;
-		case "#uploadInProgress":
-			previousPage="upload"
-			showElement(document.getElementById("uploadInProgress"));;
-			break;
+		case "#signout":
+			window.location.href = "https://structuralab.com/login.html";
+			signOut();
+		case "#gsc.tab=0"://home/default
 		case "#"://home/default
 		case ""://home/default
 			document.getElementById("homeText").classList.add("show")
@@ -89,26 +70,16 @@ function load(){
 			getBulkItemData("default",previousEndKey);
 			break;
 		case "#userprofile":
+			window.location.href = "https://structuralab.com/#userprofile";
 			metaTitle = "Structura Lab: Your Profile"
 			Description.setAttribute("content","Edit your profile")
 			previousPage="#userprofile"
 			loadUserProfilePage();
 			break;
-		case "#signout":
-			metaTitle = "Structura Lab: Signout"
-			Description.setAttribute("content","Signout")
-			signOut();
-			break;
 		case "#upload":
-			metaTitle = "Structura Lab: Upload New"
-			Description.setAttribute("content","Upload a new file")
-			previousPage="#upload"
-			showElement(document.getElementById("uploadStep1"),checkLogin=true);
+			window.location.href = "https://structuralab.com/upload.html";
 			break;
 		default://processing fall through. particulary double hashed items
-			metaTitle = "Structura Lab"
-			Description.setAttribute("content",defaultDescription)
-			previousPage=""
 			processHash(pageType);
 			break;
 	}
@@ -126,7 +97,16 @@ function processHash(hash){
 			showEditItem(hashArray[2])
 			break;
 		default:
-			goHome();//If the hash cannot be found clear the hash and go home
+			let path = window.location.pathname;
+			let page = path.split("/").pop().replace(".html","");
+			if (page.length>0){
+				document.getElementById("homeText").classList.add("hide")
+				document.getElementById("homeText").classList.remove("show")
+			}
+			else{
+				document.getElementById("homeText").classList.remove("hide")
+				document.getElementById("homeText").classList.add("show")
+			}
 			break;
 
 	}
@@ -255,11 +235,7 @@ window.onhashchange = function(){//checks if the hash has changed to refresh use
 	pageType=window.location.hash
 	load();//determine what should happen on this hash refreshe
 }
-window.onclick = function(event) {//clicking the dropdowns
-  if (!event.target.matches('.dropbtn')) {
-    hideDropdowns();
-  }
-}
+
 window.addEventListener("resize", resizeGrid);
 function resizeGrid(size){
 	var height = document.body.clientHeight;
@@ -280,6 +256,7 @@ function resizeGrid(size){
 //Page Generation Callbacks
 
 function setupGrid(items, cache=true){
+	
 	if (Object.keys(cachedItems).length>10000){//one item averages about 1kB limiting memory use to about 10MB
 		cachedItems={}
 	}
@@ -290,7 +267,6 @@ function setupGrid(items, cache=true){
 		}
 		addElement(items[i]);
 	}
-	
 }
 
 function addElement(data){
@@ -403,27 +379,14 @@ function sortGrid(key){
 	setupGrid(sortedItems, cache=false)
 }
 
-function clickSort() {
-  show = !document.getElementById("sort").classList.contains("show");
-  hideDropdowns();
-  if(show){
-	document.getElementById("sort").classList.add("show");
-  }
-}
-function clickFilter() {
-  show = !document.getElementById("filter").classList.contains("show");
-  hideDropdowns();
-  if(show){
-	document.getElementById("filter").classList.add("show");
-  }
-}
+
 function submitItemEdit(){
 	getToken(postEdit)
 	getToken(makeStructura)
 }
 function editItemButton(){
 	//Needs work
-	const guid = window.location.hash.split("#")[2]
+	const guid = window.location.hash.split("#")[2].split("&")[0]
 	window.location.hash="#edititem#"+guid
 }
 function delteItemButton(){
@@ -437,10 +400,10 @@ function loadUserProfilePage(){
 function uploadButton(){
 	
 	if(cognitoUser){
-		window.location.hash = '#upload';
+		window.location.href = "https://structuralab.com/upload.html";
 		return
 	}
-	window.location.hash = '#login';
+	window.location.href = "https://structuralab.com/login.html";
 }
 function uploadMcstructure(){
 	window.location.hash = "#uploadInProgress"
@@ -470,13 +433,10 @@ function uploadMcstructure(){
 	}
 }
 //navigation and show functions 
-function goHome(){
-	window.location.href="https://structuralab.com";
-}
 function showElement(element,checkLogin=false){
 	hideMain();
 	if(credentials == null && checkLogin){
-		winodw.location.pathname = "https://structuralab.com/login.html"
+		window.location.href = "https://structuralab.com/login.html"
 		showElement(document.getElementById("loginFormDiv"));
 	}else{
 		element.classList.remove("hide")
@@ -486,9 +446,9 @@ function showElement(element,checkLogin=false){
 
 function completeEditing(url){
 	//needs work
-	//const guid = window.location.hash.split("#")[2]
+	//const guid = window.location.hash.split("#")[2].split("&")[0]
 	//window.location.hash="#item#"+guid
-	winodw.location.pathname = "https://structuralab.com/"+url
+	window.location.href = "https://structuralab.com/"+url
 }
 function showGrid(){
 	document.getElementById("grid").classList.remove("hide")
@@ -575,21 +535,12 @@ function clearForms(){//reset all form values to empty
 		}
 	}	
 }
-function hideDropdowns(){//hides the dropdowns for the middle navagation menue
-	var dropdowns = document.getElementsByClassName("dropdown-content");
-    var i;
-    for (i = 0; i < dropdowns.length; i++) {
-      var openDropdown = dropdowns[i];
-      if (openDropdown.classList.contains('show')) {
-        openDropdown.classList.remove('show');
-      }
-    }
-}
+
 //Cognito user functions
 function signOut(){
 	credentials.user.signOut()
 	checkLogin();
-	window.location.hash = '#login';
+	window.location.href = "https://structuralab.com/login.html";
 }
 // profile editing
 function saveUserProfile(){
@@ -702,7 +653,7 @@ function getSignedS3Urls(callback,fileNameList,jwtoken){
 }
 
 function fixThumnailSize(jwtoken){
-	const guid = window.location.hash.split("#")[2]
+	const guid = window.location.hash.split("#")[2].split("&")[0]
 	fetch(apiUrl, {
 		method: 'POST',
 		headers: {page:"resizeimages",filter:guid,
@@ -711,7 +662,7 @@ function fixThumnailSize(jwtoken){
 	})
 	.then(response => response.json())
 	.then(response => {
-		const guid = window.location.hash.split("#")[2]
+		const guid = window.location.hash.split("#")[2].split("&")[0]
 		document.getElementById("gallery").src = "https://s3.us-east-2.amazonaws.com/structuralab.com/"+guid+"/fullSizedPicture.png?t=" + new Date().getTime();
 	})
 }
@@ -730,7 +681,7 @@ function fixIconSize(jwtoken){
 }
 
 function makeStructura(jwtoken){
-	const guid = window.location.hash.split("#")[2]
+	const guid = window.location.hash.split("#")[2].split("&")[0]
 	fetch(structuraURL, {
 		method: 'POST',
 		headers: {
@@ -748,7 +699,7 @@ function makeStructura(jwtoken){
 }
 
 function deleteItem(jwtoken){
-	const guid = window.location.hash.split("#")[2]
+	const guid = window.location.hash.split("#")[2].split("&")[0]
 	fetch(apiUrl, {
 		method: 'POST',
 		headers: {page:"deleteitem",filter:guid,token:jwtoken}
@@ -797,7 +748,7 @@ function postEdit(jwtoken){
 	itemData.visibility = document.getElementById("editVisibility").checked 
 	itemData.category = document.getElementById("editCategory").value
 	itemData.youtubelink = document.getElementById("setYoutubeLink").value 
-	const guid = window.location.hash.split("#")[2]
+	const guid = window.location.hash.split("#")[2].split("&")[0]
 	itemData=JSON.stringify(itemData)
 	fetch(apiUrl, {
 		method: 'POST',
@@ -840,6 +791,8 @@ function getItemData(itemGuid){//gets item data if and only if the data isnt cac
 
 function getBulkItemData(page_value,filter_value){//
 	showGrid();
+	loadCookies("rank")
+	sortGrid();
 	fetch(apiUrl, {
 		method: 'POST',
 		headers: {page:page_value,filter:filter_value}
@@ -848,9 +801,27 @@ function getBulkItemData(page_value,filter_value){//
 	.then(response => {
 		cachedItems=response["items"]
 		sortGrid("rank")
+		saveCookies(cachedItems);
 	})
 }
 
+function saveCookies(items){
+	if(items.length>1){
+		localStorage.setItem("structuraItems",JSON.stringify(items))
+	}
+}
+function loadCookies(){
+	try {
+		let loadedValue=localStorage.getItem("structuraItems")
+		cachedItems =  JSON.parse(loadedValue)
+	}catch(e){
+		console.log("not JSON")
+		cachedItems={}
+	}	
+	if(cachedItems===null){
+		cachedItems={}
+	}
+}
 //Helper functions
 function dynamicSort(property) {
     var sortOrder = 1;
@@ -867,7 +838,6 @@ function dynamicSort(property) {
     }
 }
 function sortItems(key,data){
-	
 	let newArrayDataOfOjbect = Object.values(data)
 	newArrayDataOfOjbect.sort(dynamicSort(key))
 	for(let i of newArrayDataOfOjbect){

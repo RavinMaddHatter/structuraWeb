@@ -40,6 +40,34 @@ body {
   font-family: minecraftNormal;
   background-color: var(--headder-cover);
 }
+.liked{
+	
+	background-image:url(https://structuralab.com/Liked.png) !important;
+    width: 25px;
+	background-color:transparent;
+	cursor: pointer;
+    height: 25px;
+    border: none;
+	background-size: cover; 
+}
+.unliked{
+	background-image:url(https://structuralab.com/Unliked.png) !important;
+    width: 25px;
+    height: 25px;
+	cursor: pointer;
+	background-color:transparent;
+    border: none;
+	background-size: cover; 
+}
+.notLoggedIn{
+	background-image:url(https://structuralab.com/LoggedOut.png) !important;
+    width: 25px;
+    height: 25px;
+	background-color:transparent;
+	cursor: pointer;
+    border: none;
+	background-size: cover; 
+}
 .description{
 	text-wrap:wrap;
 }

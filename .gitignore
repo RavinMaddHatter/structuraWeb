@@ -7,3 +7,11 @@ lambdaLayer/python_complete/*
 lambdaLayer/python.zip
 modleToMinecraftFunction/LambdaLayer/*
 Server/~$Search Recomendations.xlsx
+*.toc
+modleToMinecraftFunction/build/gui/base_library.zip
+*.pkg
+modleToMinecraftFunction/build/gui/localpycs/pyimod01_archive.pyc
+*.pyc
+*.pyz
+*.zip
+*.exe

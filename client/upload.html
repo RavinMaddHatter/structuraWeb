@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3005750757891844" crossorigin="anonymous"></script>
+<link rel="icon" type="image/png" href="/favicon.png"/>
+<title id="metaTitle">Structura Lab: Misc</title>
+<meta name="description" id="metaDescription" content="Misc. Structures, these could be any sort of structura file. The creator didnt think they fit any category properly."></meta>
+<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3005750757891844"
+     crossorigin="anonymous"></script> -->
+<script src="https://s3.us-east-2.amazonaws.com/structuralab.com/aws-cognito-sdk.min.js"></script>
+<script src="https://s3.us-east-2.amazonaws.com/structuralab.com/amazon-cognito-identity.min.js"></script>
+<script src="https://sdk.amazonaws.com/js/aws-sdk-2.1.24.min.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel = "stylesheet" href="StructuraStyle.css">
+</head>
+<body>
+<div class="topnav">
+  <h2>Structura Lab</h2>
+  <div class="headLinks show" id="loginLink">
+    <a href="https://structuralab.com/login.html" rel="nofolow">Login</a>
+  </div>
+  <div class="headLinks hide" id="profLink">
+    <a href="#userprofile" rel="nofolow">Profile</a>
+  </div>
+  <div class="headLinks hide" id="signOutButton">
+    <a href="#signout" rel="nofolow">Sign Out</a>
+  </div>
+  <p>Your place for discovering what is possible in Minecraft Bedrock </p>
+
+</div>
+<div class="content">
+<div class="middlenav">
+  <div class="dropdown">
+	<button onclick="goHome()" class="dropbtn">Home</button>
+  </div>
+  <div class="dropdown">
+  <button onclick="clickFilter()" class="dropbtn">Category</button>
+    <div id="filter" class="dropdown-content">
+      <a href="https://structuralab.com/Farms.html">Farms</a>
+      <a href="https://structuralab.com/Buildings.html">Buildings</a>
+      <a href="https://structuralab.com/Terrain.html">Terrain</a>
+      <a href="https://structuralab.com/Villager.html">Villager</a>
+      <a href="https://structuralab.com/Storage.html">Storage</a>
+      <a href="https://structuralab.com/Flying.html">Flying Machines</a>
+      <a href="https://structuralab.com/Furnaces.html">Furnaces</a>
+      <a href="https://structuralab.com/Redstone.html">Redstone</a>
+      <a href="https://structuralab.com/Statues.html">Statues</a>
+      <a href="https://structuralab.com/Misc.html">Misc</a>
+    </div>
+  </div>
+  <div class="dropdown">
+  <button onclick="clickSort()" class="dropbtn">Sort By</button>
+    <div id="sort" class="dropdown-content">
+      <button onclick="sortGrid('rank')">Ranking</button>
+      <button onclick="sortGrid('newest')">newest</button>
+      <button onclick="sortGrid('oldest')">oldest</button>
+      <button onclick="sortGrid('name')">Name</button>
+      <!--button onclick="sortGrid('')">Most Downloaded</a>
+      <button onclick="sortGrid(this)">Highest Rated</a-->
+      <button onclick="sortGrid('random')">Random</a>
+    </div>
+  </div>
+  <div class="dropdown">
+	<button onclick="uploadButton()" class="dropbtn">Upload</button>
+  </div>
+  <div class="dropdown">
+  <button onclick="clickTools()" class="dropbtn">Tools</button>
+    <div id="tools" class="dropdown-content">
+      <a href="https://structuralab.com/ModelToMinecraft.html">Model To  Minecraft</a>
+      <a href="https://github.com/bud-aj29/BE_Block_Fill_Paint/releases">Bud's Painting Pack</a>
+      <a href="https://mcpedl.com/structure-block-export-button-for-mcpe/">Block Export Button (Android)</a>
+    </div>
+  </div>
+</div>
+  <div class="HeadText main hide" id="homeText">
+	<h2>Welcome!</h2>
+	<div class="headCenter">Structura Lab is a place to find, share, and make structura files. For a walk through on how this site works see the video below:</div>
+	<iframe class="youtubeSplash" id="youtubeSplash" src="https://www.youtube.com/embed/zFWi_NNvUf4"></iframe>
+	<div class="headCenter">Structura is Free and Open source, The structura Desktop app allows you more flexiblity than the web interface. For more information about Structura check out the following links:</div>
+	<div class="headCenter"><a href="https://github.com/RavinMaddHatter/Structura">Structura Git Hub</a></div>
+	<div class="headCenter"><a href="https://github.com/RavinMaddHatter/Structura/releases">Structura Desktop App</a></div>
+	<div class="headCenter"><a href="https://www.youtube.com/watch?v=HwkI8KhWGbs&list=PL0bqDM9nfA12TYSz2m6i8FDTOlWGxiz4d">Structura Youtube Playlist</a></div>
+
+  </div>
+<!-- upload forms-->
+  <div class="uploadForm1 main" id="uploadStep1">
+
+	<h3 class="uploadStepTitle">Upload .mcstructure file/files</h3>
+	<div>
+      <input type="file" id="fileUpload" multiple accept=".mcstructure">  </input>
+    </div>
+	<div class="uploadExplanationStep">Please upload a .mcstructure file exported from minecraft bedrock edition. The file must contain data (a bug in minecraft/onedrive some times makes empty files)</div>
+	<div class="uploadExplanationStep">If more than 1 file is uploaded all files are converted and combined into 1 pack. The files are then selected using the nametag feature in minecraft.</div>
+	<div class="uploadExplanationStep">After uploading the files you will have the option to upload a thumbnail, give it a title, embed a youtube video, and give the pack a description</div>
+	<div class="uploadExplanationStep">The Structura files will be automatically generated and you will not have to input aditional information to complete your post.</div>
+	<div class="uploadExplanationStep">Exchanging the structure file is not currently supported, however files you own can be permanently deleted from the website  and re-posted.</div>
+    <div>
+      <button onclick="uploadMcstructure()">Submit</button>
+    </div>
+	<!--<progress max=”100” value=”0”></progress> -->
+  </div>
+  <!-- Edit Item -->
+  <div class="editItem main hide" id="uploadInProgress">
+	<div >
+		<h3 class="EditTitle">UPLOADING: </h3>
+	</div>
+	</div>
+  <!-- Edit Item -->
+  <div class="editItem main hide" id="timeoutError">
+	<div >
+		<h3 class="EditTitle">Timeout Error </h3>
+		<div class="uploadExplanationStep">Unfortunately your file is too large to convert via structura lab at this time. The program either took too long or ran out of memory. Retrying with the same files will not fix this.</div>
+
+	</div>
+	</div>
+  <!-- Edit Item -->
+  <div class="editItem main hide" id="makingPost">
+	<div >
+		<h3 class="EditTitle">Making Post </h3>
+		<div class="uploadExplanationStep">You will be redirected shortly.</div>
+
+	</div>
+	</div>
+  <!-- Edit Item -->
+  <div class="editItem main hide" id="convertInProgress">
+	<div >
+		<h3 class="EditTitle">Converting: </h3>
+		<div class="uploadExplanationStep">This may take up  to 5 minutes. After 5 minutes it will give up and go to failed. The files are too big for structura if this occurs.</div>
+		<div class="uploadExplanationStep">Time Remaining until Failure:</div>
+		<div class="uploadExplanationStep" id="countdown">300</div>
+	</div>
+	</div>
+<script src="uploadPage.js"></script>
+<script src="heading.js"></script>
+</html>

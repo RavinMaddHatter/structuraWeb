@@ -44,9 +44,6 @@ function load(){
 			goHome()
 	}
 }
-function goHome(){
-	window.location.href = "https://structuralab.com";
-}
 //helpers
 window.onhashchange = function(){//checks if the hash has changed to refresh user views
 	pageType=window.location.hash

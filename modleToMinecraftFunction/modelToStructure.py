@@ -17,7 +17,7 @@ class modelConverter:
     def scaleMesh(self,maxSize):
         self.pitch = max(self.meshdims)/(maxSize-1)
     def rotate(self, xrot,yrot,zrot):
-        HTM=a=euler_matrix(xrot*np.pi/180,yrot*np.pi/180,zrot*np.pi/180)
+        HTM=euler_matrix(xrot*np.pi/180,yrot*np.pi/180,zrot*np.pi/180)
         self.mesh.apply_transform(HTM)
     def makeModel(self,folder=""):
         matrix = np.array(self.mesh.voxelized(pitch=self.pitch).matrix)

@@ -18,28 +18,79 @@ var metaTitle = document.querySelector('title').textContent//title of SEO purpas
 var Description = document.getElementById("metaDescription")//Description handle for SEO purposes
 // check if user is logged in
 checkLogin();//verifies user login state to keep experience uniform
-
+getLikes();
 window.onclick = function(event) {//clicking the dropdowns
   if (!event.target.matches('.dropbtn')) {
     hideDropdowns();
   }
 }
-//Page Generation Callbacks
-/*function editItemForm(item){
-	document.getElementById("editThumnail").src = "https://s3.us-east-2.amazonaws.com/structuralab.com/"+item["GUID"]+"/thumbnail.png"
-	document.getElementById("editTitle").value = item["Name"]
-	document.getElementById("editDescription").value = item["Description"]
-	document.getElementById("editCategory").value = item["Category"]
-	document.getElementById("editVisibility").checked = item["Visible"]
-	if("youtube" in item){
-		document.getElementById("setYoutubeLink").value = item["youtube"]
+function getLikes(){
+	let url = window.location.href
+	let itemGuid = url.split("/").reverse()[1]
+	console.log(itemGuid)
+	let item={}
+	//should eventually be optimized to send user name and return bool and int rather than array
+	fetch(apiUrl, {
+		method: 'POST',
+		headers: {page:"item",filter:itemGuid}
+	})
+	.then(response => response.json())
+	.then(response => {
+		item=response["item"]
+		makeLikeBox(item)
+	})
+}
+function makeLikeBox(item){
+	console.log(item)
+	let likes = item["likes"]
+	let numLikes = likes.length
+	let liked = likes.includes(username)
+	let loggedIn = credentials != null
+	let likeBlock = document.createElement("div");
+	let likeButton = document.createElement("button");
+	likeButton.setAttribute('type', 'submit');
+	likeButton.addEventListener("click", likePost);
+	if(loggedIn){
+		if(liked){
+			likeButton.classList.add("liked")
+		}
+		else{
+			likeButton.classList.add("unliked")
+		}
 	}
-	if("youtube" in item && item["youtube"].length>0){
-		const videoguid = item["youtube"].split("/").pop()
-		const youtubeThumb = "https://img.youtube.com/vi/"+videoguid+"/0.jpg"
-		document.getElementById("editThumnail").src = youtubeThumb
+	else{	
+		likeButton.classList.add("notLoggedIn")
 	}
-}*/
+	likeBlock.appendChild(likeButton)
+	let likeCountContainer= document.createElement("span");
+	likeCountContainer.innerText = "Likes: " + numLikes.toString()
+	likeBlock.appendChild(likeCountContainer)
+	likeBlock.id = "likeBlock"
+	document.getElementById("brief").appendChild(likeBlock)
+}
+function likePost(){
+	if (credentials != null){
+		document.getElementById("likeBlock").remove()
+		getToken(likePostAPI)
+	}else{
+		window.location.href = "https://structuralab.com/login.html"
+	}
+}
+function likePostAPI(jwtoken){
+	let url = window.location.href
+	let itemGuid = url.split("/").reverse()[1]
+	fetch(apiUrl, {
+		method: 'POST',
+		headers: {page:"likePost",
+				filter:itemGuid,
+				token:jwtoken}
+	}).then(response => response.json())
+	.then(response => {
+		item=response["item"]
+		console.log(item)
+		makeLikeBox(item)
+	})
+}
 // Default on error functions
 function noProfPic(element){
 	element.src='https://s3.us-east-2.amazonaws.com/structuralab.com/Profiles/Default_pfp.png'
@@ -59,19 +110,19 @@ function clickFilter() {
   }
 }
 function submitItemEdit(){
+	hideMain()
+	document.getElementById("itemPage").classList.add("show");
+	document.getElementById("splash").classList.add("hide");
+	document.getElementById("details").classList.add("hide");
+	let div = document.createElement("div");
+	div.classList.add("EditTitle") ;
+	div.innerText = "Saving"
+	document.getElementById("itemPage").appendChild(div)
 	getToken(postEdit)
 	getToken(makeStructura)
 }
 function editItemButton(){
 	hideMain()
-//	let title = document.getElementById("itemName").innerText
-//	let description = document.getElementById("description").innerText
-//	let youtubesrc = document.getElementById("youtubeEmbed").src
-//	document.getElementById("editTitle").value = title
-//	document.getElementById("editDescription").value = description
-//	document.getElementById("editCategory").value = youtubesrc
-	//document.getElementById("editVisibility").checked = item["Visible"]
-	
 	showElement(document.getElementById("editItem"));
 }
 function delteItemButton(){
