@@ -264,6 +264,9 @@ def updateItem(headders):
         response = table.get_item(Key={'GUID': guid})
         itemData = response["Item"]
         if decoded["json"]["username"] == itemData["Creator"]:
+            for key in itemData.keys():
+                if type(itemData[key]) is str:
+                    itemData[key]=html.escape(itemData[key])
             itemData["Name"] = headders["data"]["name"]
             itemData["Description"] = headders["data"]["description"]
             itemData["Visible"] = headders["data"]["visibility"]
