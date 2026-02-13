@@ -14,7 +14,7 @@ import os
 from math import ceil
 from decimal import Decimal, Context
 ctx = Context(prec=38)
-
+import urlChecker
 structuraGeneralSiteTable="StructuraWebsite"
 awsRegion="us-east-2"
 corsHeaders={'Access-Control-Allow-Headers': '*',
@@ -23,38 +23,47 @@ corsHeaders={'Access-Control-Allow-Headers': '*',
                 }
  
 def lambda_handler(event, context):
-    if not("page" in event["headers"]):
-        return errorResponse("invlaid header",event)
-    page=event["headers"]["page"]
-    
-    match page:
-        case "item":
-            return getItem(event["headers"]["filter"])
-        case "upload1":
-            return getS3Sig(event["headers"]["filter"],event["headers"]["token"],event["headers"]["files"])
-        case "profileupdate":
-            return updateProfile(event["headers"])
-        case "profile":
-            try:
-                return getProfile(event["headers"]["filter"])
-            except:
-                return errorResponse("","No Profile Found")
-        case "usrprofile":
-            return signedProfile(event["headers"])
-        case "updateItem":
-            return updateItem(event["headers"])
-        case "deleteitem":
-            return deleteItem(event["headers"])
-        case "likePost":
-            return likePost(event["headers"])
-        case "resizeimages":
-            return fixImageSizes(event["headers"])
-        case "default":
-            return getResults(page,event["headers"]["filter"])
-        case "createSiteMap":
-            return createSiteMap()
-        case _:
-            return getResults(page,event["headers"]["filter"])
+    try:
+        if not("page" in event["headers"]):
+            return errorResponse("invlaid header",event)
+        page=event["headers"]["page"]
+        if page == "#index":
+            page="default"
+        match page:
+            case "item":
+                return getItem(event["headers"]["filter"])
+            case "upload1":
+                return getS3Sig(event["headers"]["filter"],event["headers"]["token"],event["headers"]["files"])
+            case "profileupdate":
+                return updateProfile(event["headers"])
+            case "profile":
+                try:
+                    return getProfile(event["headers"]["filter"])
+                except:
+                    return errorResponse("","No Profile Found")
+            case "usrprofile":
+                return signedProfile(event["headers"])
+            case "updateItem":
+                return updateItem(event["headers"])
+            case "deleteitem":
+                return deleteItem(event["headers"])
+            case "likePost":
+                return likePost(event["headers"])
+            case "resizeimages":
+                return fixImageSizes(event["headers"])
+            case "default":
+                return getResults(page,event["headers"])
+            case "demotepost":
+                try:
+                    return demotePost(event["headers"])
+                except Exception as e:
+                    return errorResponse(str(e), str(e))
+            case "createSiteMap":
+                return createSiteMap()
+            case _:
+                return getResults(page,event["headers"])
+    except Exception as e:
+        return errorResponse(str(e), str(e))
         
     
 def errorResponse(text,event):
@@ -70,7 +79,49 @@ def errorResponse(text,event):
                 'headers':corsHeaders,
                 'body': json.dumps(event)}
     return resp
-    
+def demotePost(headders):
+    decoded=verifyToken(headders["token"])
+    if decoded["auth"]:
+        dynamodb = boto3.resource('dynamodb', region_name="us-east-2")
+        table = dynamodb.Table('webProfiles')
+        userName = decoded["json"]["username"]
+        try:
+            response = table.get_item(
+                Key={
+                    'name': userName
+                })     
+        except:
+            return{
+                'statusCode': 200,
+                'headers':corsHeaders,
+                'body': {"message":"not a valid user"}
+                }
+        if response['Item']["admin"]:
+            guid = headders["filter"]
+            dynamodb = boto3.resource('dynamodb', region_name="us-east-2")
+            table = dynamodb.Table(structuraGeneralSiteTable)
+            response = table.get_item(Key={'GUID': guid})
+            itemData = response["Item"]
+            itemData["hatterPenelty"]="added"
+            score = calculateRank(itemData)
+            itemData["rank"]=score
+            table.put_item(Item=itemData)
+            retval={
+                    'statusCode': 200,
+                    'headers':corsHeaders,
+                    'body': json.dumps({"message":"Update Sucessfull!","item":itemData},default=float)
+                    }
+        return retval
+        
+    return {
+        'statusCode': 200,
+        'headers':{'Access-Control-Allow-Headers': '*',
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': '*'
+                },
+        'body': json.dumps()
+        
+    }
 def likePost(headders):
     decoded=verifyToken(headders["token"])
     if decoded["auth"]:
@@ -118,37 +169,44 @@ def likePost(headders):
         'body': json.dumps()
         
     }
-def getResults(page, pageNumber):
+def getResults(page,headders):
+    lastEvaluated=None
     dynamodb = boto3.resource('dynamodb', region_name="us-east-2")
     table = dynamodb.Table(structuraGeneralSiteTable)
     response={}
     categories=["Farms","Buildings","Terrain","Villager","Storage","Flying",
             "Furnaces","Redstone","Statues","Misc"]
     page=page.replace("#","")
+    kwargs = {}
+    kwargs["ScanIndexForward"]=False
+    kwargs["Limit"]=100
     if page in categories:
-        response = table.query(
-                IndexName='Category-index',
-                KeyConditionExpression=Key('Category').eq(page),
-                FilterExpression= 'Visible = :vis',
-                ExpressionAttributeValues= {':vis': True })
+        kwargs["IndexName"]='Category-index'
+        kwargs["FilterExpression"]=Key("Visible").eq(True) 
+        kwargs["KeyConditionExpression"]=Key('Category').eq(page)
     else:
-        keyFilter=Key("Visible").eq(True) & Attr("Description").ne("none") & Attr("hatterPenelty").not_exists() & Attr("Name").ne("Name Not Set") 
-        response = table.query(
-                IndexName='env-index',
-                KeyConditionExpression=Key('env').eq("prod"),
-                FilterExpression= keyFilter) 
+        kwargs["IndexName"]='env-index'
+        kwargs["FilterExpression"]=Key("Visible").eq(True) & Attr("Description").ne("none") & Attr("hatterPenelty").not_exists() & Attr("Name").ne("Name Not Set") & Attr("pickUploaded").eq(True)
+        kwargs["KeyConditionExpression"]=Key('env').eq("prod")
+    if "lastevaluated" in headders.keys():
+        lastEvaluated=json.loads(headders["lastevaluated"])
+        lastEvaluated["rank"]=Decimal(str(lastEvaluated["rank"]))
+        kwargs["ExclusiveStartKey"]=lastEvaluated
+
+    response = table.query(**kwargs)
     for item in response['Items']:
         item["rank"]=calculateRank(item)
-    data = response['Items'] 
-
-    
+    data = response['Items']
+    lastKey=None
+    if 'LastEvaluatedKey' in response:
+        lastKey=response['LastEvaluatedKey']
     return  {
         'statusCode': 200,
         'headers':{'Access-Control-Allow-Headers': '*',
                 'Access-Control-Allow-Origin': '*',
                 'Access-Control-Allow-Methods': '*'
                 },
-        'body': json.dumps({"items":data}, default=float)
+        'body': json.dumps({"items":data,"lastevaluated":lastKey,"debug":headders}, default=float,)
     }
     
 def getItem(guid):
@@ -175,7 +233,6 @@ def getS3Sig(filter, token, files):
         data["guid"]=folder
         urls={}
         userName=decoded["json"]["username"]
-        
         dynamoDBentry={}
         dynamoDBentry["GUID"]=folder
         dynamoDBentry["Category"] = "Misc"
@@ -197,7 +254,7 @@ def getS3Sig(filter, token, files):
         for file in files:
             if file.endswith(".mcstructure"):
                 serverFileName=file
-                dynamoDBentry["structureFiles"][file] = f"https://s3.us-east-2.amazonaws.com/structuralab.com/{folder}/{serverFileName}"
+                dynamoDBentry["structureFiles"][file] = f"https://structuralab.com/{folder}/{serverFileName}"
                 urls[file] = s3Client.generate_presigned_url('put_object', Params = {'Bucket': "structuralab.com", 'Key': f"{folder}/{serverFileName}"}, ExpiresIn = 3600)
         data["urls"]=urls
         dynamodb = boto3.resource('dynamodb')
@@ -228,7 +285,6 @@ def verifyToken(token):
     for key in keys:
         if key['kid'] == jwtheaders["kid"]:
             jwkValue=key
-    print(json.dumps(jwkValue))
     publicKey = jwt.algorithms.RSAAlgorithm.from_jwk(json.dumps(jwkValue))
     try:
         decoded=jwt.decode(token,publicKey,algorithms=[alg])
@@ -266,17 +322,17 @@ def updateItem(headders):
         if decoded["json"]["username"] == itemData["Creator"]:
             for key in itemData.keys():
                 if type(itemData[key]) is str:
-                    itemData[key]=html.escape(itemData[key])
-            itemData["Name"] = headders["data"]["name"]
-            itemData["Description"] = headders["data"]["description"]
-            itemData["Visible"] = headders["data"]["visibility"]
+                    itemData[key]=itemData[key]
+            itemData["Name"] = html.escape(headders["data"]["name"])
+            itemData["Description"] = html.escape(headders["data"]["description"])
+            itemData["Visible"] = bool(headders["data"]["visibility"])
             itemData["env"] = "DEV"
             if itemData["Visible"]:
                 itemData["env"] = "prod"
-            itemData["Category"] = headders["data"]["category"]
+            itemData["Category"] = html.escape(headders["data"]["category"])
             
             if("youtubelink" in headders["data"].keys()):
-                itemData["youtube"] = headders["data"]["youtubelink"]
+                itemData["youtube"] = urlChecker.checkYoutubeVideo(html.escape(headders["data"]["youtubelink"]))
                 headders["data"]="saw youtube"
             score = calculateRank(itemData)
             itemData["rank"]=score
@@ -316,14 +372,19 @@ def updateProfile(headders):
         for key in headders.keys():
             if type(headders[key]) is str:
                 headders[key]=html.escape(headders[key])
+        old_data = table.get_item(Key={'name': username})
+        admin = False
+        if "admin" in old_data['Item'].keys():
+            admin = old_data['Item']["admin"]
         table.put_item(
             Item={
                 'name': username,
-                'Discord': headders["discord"],
-                'Ko-Fi': headders["kofi"],
-                'Paetron': headders["patreon"],
-                'Twitch': headders["twitch"],
-                "Youtube":headders["youtube"]
+                'Discord': html.escape(headders["discord"]),
+                'Ko-Fi': html.escape(headders["kofi"]),
+                'Paetron': html.escape(headders["patreon"]),
+                'Twitch': html.escape(headders["twitch"]),
+                "Youtube":html.escape(headders["youtube"]),
+                "admin":admin
             })
         s3Client = boto3.client('s3')
         url = s3Client.generate_presigned_url('put_object', Params = {'Bucket': "structuralab.com", 'Key': f"Profiles/{username}/profilePic.png"}, ExpiresIn = 300)
@@ -362,6 +423,7 @@ def getProfile(userName,public=True):
                 'Ko-Fi': "",
                 'Paetron': "",
                 'Twitch': "",
+                'admin': False,
                 "Youtube":""}}
     data={}
     data["profile"]=response['Item']
@@ -369,12 +431,14 @@ def getProfile(userName,public=True):
     if public:
         response = table.query(
             IndexName='Creator-index',
+            ScanIndexForward =False,
             KeyConditionExpression=Key('Creator').eq(userName),
             FilterExpression=Attr('Visible').eq(True)
             )
     else:
        response = table.query(
             IndexName='Creator-index',
+            ScanIndexForward =False,
             KeyConditionExpression=Key('Creator').eq(userName) 
             ) 
     data["items"]=response['Items']
@@ -446,7 +510,6 @@ def fixImageSizes(headder):
                 download_path = '/tmp/{}{}'.format(guid, "fullSizedPicture.png")
                 upload_path  = '/tmp/{}{}'.format(guid, "resized_fullSizedPicture.png")
                 upload_path_thumbnail  = '/tmp/{}{}'.format(guid, "resized_thumnail.png")
-                print(f"{guid}/fullSizedPicture.png")
                 s3_client.download_file("structuralab.com", f"{guid}/fullSizedPicture.png", download_path)
                 resize_image(download_path, upload_path,1080)
                 resize_image(download_path, upload_path_thumbnail,250)
@@ -480,22 +543,23 @@ def generateItemHTML(data,bucket):
         if type(data[key]) is str:
             data[key]=html.escape(data[key])
     structureHTML=""
-    for structureName in data["structureFiles"].keys():
-        structureHTML+=f'<a class="show" href="{data["structureFiles"][structureName]}">{data["Name"]}.mcstructure</a>'
     nameTagHTML=""
+    for structureName in data["structureFiles"].keys():
+        structureHTML+=f'<a class="show" href="{data["structureFiles"][structureName]}">{data["structureFiles"][structureName].split("/")[-1]}</a>'
+        if len(data["structureFiles"].keys())>1:
+            nametag=html.escape(data["structureFiles"][structureName]).split(".")[-2].split("/")[-1] 
+            nameTagHTML+=f'<div>{nametag}</div>'
     materialsSorted=dict(sorted(data["MaterialsList"].items(), key=lambda x:x[1],reverse=True))
-    print(materialsSorted)
     materialsListHTML=f'<h4 class="itemCountH">Item Name</h4><h4 class="itemCountH">Number of Items</h4><h4 class="itemCountH">Stacks (round up)</h4><h4 class="itemCountH">Shulkers (round up)</h4>\n'
     for materialName in materialsSorted:
         numItems=data["MaterialsList"][materialName]
         stacks=ceil(data["MaterialsList"][materialName]/64)
         shulkers=ceil(data["MaterialsList"][materialName]/(64*27))
         materialsListHTML+=f'<h4 class="itemName">{materialName}</h4><h4 class="itemName">{numItems}</h4><h4 class="itemName">{stacks}</h4><h4 class="itemCount">{shulkers}</h4>\n'
-    print(materialsListHTML)
     showThumb=" showInline"
     showYoutube=" hide"
     
-    pictureURL=f'src="https://s3.us-east-2.amazonaws.com/structuralab.com/{guid}/fullSizedPicture.png"'
+    pictureURL=f'src="https://structuralab.com/{guid}/fullSizedPicture.png"'
     catSel={"Farms":"","Buildings":"","Terrain":"","Villager":"","Storage":"","Flying":"","Furnaces":"","Redstone":"","Statues":"","Misc":""}
     catSel[data["Category"]]="selected"
     youtube=""
@@ -511,8 +575,8 @@ def generateItemHTML(data,bucket):
         
     StructuraFile=""
     if "StructuraFile" in data.keys():
-        StructuraFile=data["StructuraFile"].replace("+","%").replace(" ","+")
-        
+         StructuraFile=f"https://s3.us-east-2.amazonaws.com/structuralab.com/{guid}/{html.escape(data['Name']).replace(" ","+")}.mcpack"#data["StructuraFile"].replace("+","%").replace(" ","+")
+
     dt= datetime.datetime.fromtimestamp(int(data["date"]))
     result = template.format(
         metatitle=f"Structura Lab: {data['Name']}",

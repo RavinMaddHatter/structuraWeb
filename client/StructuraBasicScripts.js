@@ -7,18 +7,21 @@ const poolData = {
 	ClientId: 'tese5jomgf225lrvescg5o96l', // Your client id here
 };
 //Global Variables
-var previousEndKey = "";//used in dynamoDB querry to get next MB of data
+var previousEndKey = null;//used in dynamoDB querry to get next MB of data
 var cachedItems = {}//cache of all items from fetch to reduce needless API querries
 var userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);//user pool data for account management
 var credentials = null;//current login credentials. Gets set by cognito.
 var fileUploadObjects={}//place holder for items being uploaded during callbacks.
 var previousPage=""//holds the previous hash for during login events
+var curPage="#"
 var metaTitle = document.querySelector('title').textContent//title of SEO purpases
 var Description = document.getElementById("metaDescription")//Description handle for SEO purposes
 var pageType = ""
 // check if user is logged in
 checkLogin();//verifies user login state to keep experience uniform
+var moderator = false // for those looking to exploit, this just shows buttons, server side checks handle the permissions for mod...
 // begin loading website
+
 initialLoad();//Check hash and start loading website
 function initialLoad(){
 	let path = window.location.pathname;
@@ -37,7 +40,8 @@ function load(){
 	if (window.location.hash.length>2){
 		pageType = window.location.hash.split("&")[0]
 	}
-	
+	previousEndKey=null
+	console.log(pageType)
 	switch(pageType){
 		case "#Farms":
 		case "#Buildings":
@@ -62,7 +66,9 @@ function load(){
 			signOut();
 		case "#gsc.tab=0"://home/default
 		case "#"://home/default
+		case "index'"://home/default
 		case ""://home/default
+
 			document.getElementById("homeText").classList.add("show")
 			document.getElementById("homeText").classList.remove("hide")
 			metaTitle = "Structura Lab"
@@ -77,7 +83,11 @@ function load(){
 			loadUserProfilePage();
 			break;
 		case "#upload":
-			window.location.href = "https://structuralab.com/upload.html";
+			if(cognitoUser!=null){
+				window.location.href = 'https://structuralab.com/upload.html';
+				return
+			}
+			window.location.href = "https://structuralab.com/login.html";
 			break;
 		default://processing fall through. particulary double hashed items
 			processHash(pageType);
@@ -268,7 +278,40 @@ function setupGrid(items, cache=true){
 		addElement(items[i]);
 	}
 }
+var postDemoteGuid = ""
+function demote(evt){
+	if (moderator){
+		postDemoteGuid = evt.currentTarget.guid
+		getToken(demotePost)
+	}
+}
+function demotePost(jwtoken){
+	let url = window.location.href
+	let itemGuid = url.split("/").reverse()[1]
+	fetch(apiUrl, {
+		method: 'POST',
+		headers: {page:"demotepost",
+				filter:postDemoteGuid,
+				token:jwtoken}
+	}).then(response => response.json())
+	.then(response => {
+		
+		console.log("post demoted: " + postDemoteGuid)
+		postDemoteGuid=""
+	})
+}
 
+
+function send_demote(callback,jwtoken){
+	fetch(apiUrl, {
+		method: 'POST',
+		headers: {page:"upload1",filter:"None",token:jwtoken,files:fileNameList}
+	})
+	.then(response => response.json())
+	.then(response => {
+		callback(response)
+	})
+}
 function addElement(data){
 	let div = document.createElement("div");
 	div.classList.add("item") ;
@@ -286,6 +329,13 @@ function addElement(data){
 	profileName.classList.add("profName");
 	profileName.href = "#profile#"+data["Creator"]
 	profileName.innerText = data["Creator"].slice(0,25)	;
+	let demoteButton = document.createElement("BUTTON")
+
+	demoteButton.classList.add("demote");
+	demoteButton.guid = data["GUID"]
+	demoteButton.innerText="demote";
+	demoteButton.addEventListener("click", demote);
+	
 	let itemName = document.createElement("a")
 	//itemName.href = "https://structuralab.com/"+data["GUID"]+"/item.html"
 	itemName.href = "https://structuralab.com/"+data["GUID"]+"/item"+data["edits"].toFixed(0)+".html"
@@ -312,13 +362,23 @@ function addElement(data){
 	else{
 		itemImg.src = "https://s3.us-east-2.amazonaws.com/structuralab.com/"+data["GUID"]+"/thumbnail.png"
 	}
+	let profileSpan = document.createElement("span");
+	profileSpan.classList.add("headText");
 	itemImg.setAttribute("onerror","noThumbnail(this)")
 	itemImg.classList.add("itemPicture");
 	itemLink.href="https://structuralab.com/"+data["GUID"]+"/item"+data["edits"].toFixed(0)+".html"
 	itemLink.classList.add("itemImgContainer")
 	itemLink.appendChild(itemImg);
 	headText.appendChild(itemName);
-	headText.appendChild(profileName);
+	profileSpan.appendChild(profileName);
+	headText.appendChild(profileSpan);
+	profileSpan.appendChild(demoteButton);
+	if (moderator){
+		demoteButton.classList.add("show");
+	}
+	else{
+		demoteButton.classList.add("hide");
+	}
 	profile.appendChild(icon);
 	head.appendChild(profile);
 	head.appendChild(headText);
@@ -381,7 +441,7 @@ function sortGrid(key){
 
 
 function submitItemEdit(){
-	getToken(postEdit)
+	
 	getToken(makeStructura)
 }
 function editItemButton(){
@@ -399,7 +459,7 @@ function loadUserProfilePage(){
 }
 function uploadButton(){
 	
-	if(cognitoUser){
+	if(cognitoUser!=null){
 		window.location.href = "https://structuralab.com/upload.html";
 		return
 	}
@@ -441,6 +501,7 @@ function showElement(element,checkLogin=false){
 	}else{
 		element.classList.remove("hide")
 		element.classList.add("show")
+		
 	}
 }
 
@@ -472,6 +533,24 @@ function showEditItem(guid){
 		})
 	}
 }
+function check_mod(profile){
+	fetch(apiUrl, {
+		method: 'POST',
+		headers: {page:"profile",filter:profile}
+	})
+	.then(response => response.json())
+	.then(response => {
+		profile=response["profile"]
+		if (profile["admin"]){
+			moderator = profile["admin"]
+			for(const button of document.getElementsByClassName("demote")){
+				button.classList.remove("hide")
+				button.classList.add("show")
+			}
+		}
+	})
+}
+
 function showProfilePage(profile){
 	showElement(document.getElementById("Profile"));
 	fetch(apiUrl, {
@@ -593,6 +672,7 @@ function checkLogin(){
 	credentials={}
 	credentials.user = cognitoUser;
 	username = cognitoUser.username
+	check_mod(username);
 	document.getElementById("signOutButton").classList.add("show")
 	document.getElementById("signOutButton").classList.remove("hide")
 	document.getElementById("profLink").classList.add("show")
@@ -695,6 +775,7 @@ function makeStructura(jwtoken){
 		let hashArray = window.location.hash.split("#");//double hashed items for things like user/items lookups
 		delete cachedItems[hashArray[2]]
 		getItemData(hashArray[2])
+		getToken(postEdit)
 	})
 }
 
@@ -789,20 +870,49 @@ function getItemData(itemGuid){//gets item data if and only if the data isnt cac
 	}
 }
 
-function getBulkItemData(page_value,filter_value){//
+function getBulkItemData(page_value,prev_key){//
 	showGrid();
 	loadCookies("rank")
 	sortGrid();
+	let headers = {page:page_value}
+	if (prev_key){
+		headers["lastevaluated"]=JSON.stringify(prev_key)
+	}
 	fetch(apiUrl, {
 		method: 'POST',
-		headers: {page:page_value,filter:filter_value}
+		headers: headers
 	})
 	.then(response => response.json())
 	.then(response => {
-		cachedItems=response["items"]
+		if (prev_key){
+			cachedItems=cachedItems.concat(response["items"])
+		}
+		else{
+			cachedItems=response["items"]
+		}
+		if (response.hasOwnProperty("lastevaluated")){
+			previousEndKey=response["lastevaluated"]
+			console.log(previousEndKey)
+			for(const button of document.getElementsByClassName("grid-more")){
+				button.classList.remove("hide")
+				button.classList.add("show")
+			}
+		}
+		else{
+			previousEndKey=null
+			
+			for(const button of document.getElementsByClassName("grid-more")){
+				button.classList.remove("show")
+				button.classList.add("hide")
+			}
+		}
 		sortGrid("rank")
 		saveCookies(cachedItems);
+		
 	})
+}
+function loadMore(){
+	getBulkItemData(previousPage,previousEndKey)
 }
 
 function saveCookies(items){

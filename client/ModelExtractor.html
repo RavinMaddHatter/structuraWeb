@@ -4,7 +4,7 @@
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3005750757891844" crossorigin="anonymous"></script>
 <link rel="icon" type="image/png" href="/favicon.png"/>
 <title id="metaTitle">Structura Lab: Login</title>
-<meta name="description" id="metaDescription" content="Structura Lab: Convert a STL to a Minecraft Structure file"></meta>
+<meta name="description" id="metaDescription" content="Structura Lab: Extract mcstructures from a Minecraft bedrock world file"></meta>
 <script src="https://structuralab.com/aws-cognito-sdk.min.js"></script>
 <script src="https://structuralab.com/amazon-cognito-identity.min.js"></script>
 <script src="https://sdk.amazonaws.com/js/aws-sdk-2.1.24.min.js"></script>
@@ -26,6 +26,7 @@
   </div>
   <p>Your place for discovering what is possible in Minecraft Bedrock </p>
  </div>
+
 <div class="middlenav">
   <div class="dropdown">
 	<button onclick="goHome()" class="dropbtn">Home</button>
@@ -51,6 +52,7 @@
   <div class="dropdown">
   <button onclick="clickTools()" class="dropbtn">Tools</button>
     <div id="tools" class="dropdown-content">
+      <a href="https://structuralab.com/ModelExtractor.html">Structure File Extractor</a>
       <a href="https://structuralab.com/ModelToMinecraft.html">Model To  Minecraft</a>
       <a href="https://github.com/bud-aj29/BE_Block_Fill_Paint/releases">Bud's Painting Pack</a>
       <a href="https://mcpedl.com/structure-block-export-button-for-mcpe/">Block Export Button (Android)</a>
@@ -62,32 +64,16 @@
 <!-- upload forms-->
   <div class="uploadForm1 main show" id="uploadForm">
 	<h1>
-	Model To Minecraft Structure File
+	Structure Extractor for Minecraft Bedrock
 	</h1>
-	<div id="scale">
-		<span>Scale:</span>
-		<input type="number" min="1" max="1000" step="1" id="scaleInput" value="50"></input>
-	</div>
-	<div id="rotationx">
-		<span>Rotation X (Degrees):</span>
-		<input type="number" min="0" max="360" id="rotX" value="0"></input>
-	</div>
-	<div id="rotationx">
-		<span>Rotation Y (Degrees):</span>
-		<input type="number" min="0" max="360" id="rotY" value="0"></input>
-	</div>
-	<div id="rotationz">
-		<span>Rotation Z (Degrees):</span>
-		<input type="number" min="0" max="360" id="rotZ" value="0"></input>
-	</div>
-	<h3 class="uploadStepTitle">Upload .mcstructure file/files</h3>
+	<h3 class="uploadStepTitle">Upload .mcworld or zip file</h3>
 	<div>
-      <input type="file" id="fileUpload" accept=".stl">  </input>
+      <input type="file" id="fileUpload" multiple accept=".mcworld, .zip">  </input>
     </div>
-	<div class="uploadExplanationStep">Please upload a .stl file. These are common 3d printing files. This only accepts STL </div>
-	<div class="uploadExplanationStep">Scale will be set based upon the largest dimension of the 3d model.</div>
-	<div class="uploadExplanationStep">Rotations are used to rotate and possition the model</div>
-	<div class="uploadExplanationStep">Upon submitting the model will be sent to my server and converted into an .mcstructure file usable with minecraft bedrock edition</div>
+	<div class="uploadExplanationStep">Please upload a Minecraft Bedrock world</div>
+	<div class="uploadExplanationStep">When saving structures in that world, save them to disk. if you save to memory this tool cannot help</div>
+	<div class="uploadExplanationStep">Your file will be temporarily uploaded to my server, all files will be deleted within 24 hours.</div>
+	<div class="uploadExplanationStep">You will recieve a link to download a zip of all structures saved to disk in that world.</div>
 	<div class="uploadExplanationStep">ALL FILES ARE DELETED AFTER 24 HOURS</div>
     <div>
       <button onclick="uploadMcstructure()">Submit</button>
@@ -96,16 +82,38 @@
 		<h2>How to Use tool</h2>
 		
 		<p>
-			This tool accpets 3d printing files and converts those files into minecraft structures. An STL file is a model file intended for 3d printing. If you do not know how to make your own STL files you can browse one of several sites that host files users are willing to share. Please respect licenses of all creators.
+			This tool will extract the structure files that have been saved to disk in your world. 
 		</p>
-		<div>
-			<a href = "https://www.printables.com/"> Printables</a>
-		</div>
-		<div>
-			<a href = "https://www.thingiverse.com/"> Thingiverse</a>
-		</div>
+		<p>
+			1: Make a cool thing in your creative world.
+		</p>
+		<p>
+			2: give your self a structure block
+		</p>
+		<p>
+			3: use the structure block to save your cool thing as a structure to disk
+		</p>
+		
+		<p>
+			4: Export your world from minecraft.
+		</p>
+		
+		<p>
+			5: Upload your world file here
+		</p>
+		
+		<p>
+			6: Download a zip package of all your structure files. do what you want with them.
+		</p>
 	</div>
   </div >
+  <div class="uploadForm1 main hide" id="needLogin">
+	<h1 id="processingTitle">Login to use this tool</h1>
+	<div id="processingText">You must login to use this tool.</div>
+	<p>
+	<a href="https://structuralab.com/login.html#login">Login</a>
+	</p>
+  </div>
   <div class="uploadForm1 main hide" id="processing">
 	<h1 id="processingTitle">Processing</h1>
 	<div id="processingText"></div>
@@ -120,11 +128,11 @@
   <div class="uploadForm1 main hide" id="download">
 	<h1>Completed</h1>
 	<div >
-		<a id="downloadLink">Download Structure File</a>
+		<a id="downloadLink">Download Structure Files</a>
 	</div>
 	<div class="uploadExplanationStep">ALL FILES ARE DELETED AFTER 24 HOURS</div>
 	<div >
-		<a href="https://structuralab.com/ModelToMinecraft.html">Make a new file</a>
+		<a href="https://structuralab.com/ModelExtractor.html">Make a new file</a>
 	</div>
   </div>
 </div>
@@ -134,7 +142,7 @@
 	<a href="https://structuralab.com/TOS.html" class="tos">Terms of Service</a>
 </div>
 </body>
-<script src="modelToMinecraft.js"></script>
+<script src="modelExtractor.js"></script>
 <script src="heading.js"></script>
 
 </html>

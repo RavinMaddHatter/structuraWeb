@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3005750757891844" crossorigin="anonymous"></script>
+<link rel="icon" type="image/png" href="/favicon.png"/>
+<title id="metaTitle">Structura Lab: Calculators</title>
+<meta name="description" id="metaDescription" content="A collection of Buildings you can place in your Minecraft Bedrock Edition world. Each post is user submitted and contains a Structura file (like Litematica) and a materials list."></meta>
+<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3005750757891844"
+     crossorigin="anonymous"></script> -->
+<script src="https://structuralab.com/aws-cognito-sdk.min.js"></script>
+<script src="https://structuralab.com/amazon-cognito-identity.min.js"></script>
+<script src="https://sdk.amazonaws.com/js/aws-sdk-2.1.24.min.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel = "stylesheet" href="StructuraStyle.css">
+</head>
+<body>
+<div class="topnav">
+  <h2>Structura Lab</h2>
+  <div class="headLinks show" id="loginLink">
+    <a href="https://structuralab.com/login.html" rel="nofolow">Login</a>
+  </div>
+  <div class="headLinks hide" id="profLink">
+    <a href="#userprofile" rel="nofolow">Profile</a>
+  </div>
+  <div class="headLinks hide" id="signOutButton">
+    <a href="#signout" rel="nofolow">Sign Out</a>
+  </div>
+  <p>Your place for discovering what is possible in Minecraft Bedrock </p>
+  
+</div>
+<div class="content">
+<div class="middlenav">
+  <div class="dropdown">
+	<button onclick="goHome()" class="dropbtn">Home</button>
+  </div>
+  <div class="dropdown">
+  <button onclick="clickFilter()" class="dropbtn">Category</button>
+    <div id="filter" class="dropdown-content">
+      <a href="https://structuralab.com/Farms.html">Farms</a>
+      <a href="https://structuralab.com/Buildings.html">Buildings</a>
+      <a href="https://structuralab.com/Terrain.html">Terrain</a>
+      <a href="https://structuralab.com/Villager.html">Villager</a>
+      <a href="https://structuralab.com/Storage.html">Storage</a>
+      <a href="https://structuralab.com/Flying.html">Flying Machines</a>
+      <a href="https://structuralab.com/Furnaces.html">Furnaces</a>
+      <a href="https://structuralab.com/Redstone.html">Redstone</a>
+      <a href="https://structuralab.com/Statues.html">Statues</a>
+      <a href="https://structuralab.com/Misc.html">Misc</a>
+    </div>
+  </div>
+  <div class="dropdown">
+  <button onclick="clickSort()" class="dropbtn">Sort By</button>
+    <div id="sort" class="dropdown-content">
+      <button onclick="sortGrid('rank')">Ranking</button>
+      <button onclick="sortGrid('newest')">newest</button>
+      <button onclick="sortGrid('oldest')">oldest</button>
+      <button onclick="sortGrid('name')">Name</button>
+      <!--button onclick="sortGrid('')">Most Downloaded</a>
+      <button onclick="sortGrid(this)">Highest Rated</a-->
+      <button onclick="sortGrid('random')">Random</a>
+    </div>
+  </div>
+  <div class="dropdown">
+	<a href="https://structuralab.com/#upload" class="dropbtn">Upload</a>
+  </div>
+  <div class="dropdown">
+  <button onclick="clickTools()" class="dropbtn">Tools</button>
+    <div id="tools" class="dropdown-content">
+      <a href="https://structuralab.com/ModelToMinecraft.html">Model To  Minecraft</a>
+      <a href="https://github.com/bud-aj29/BE_Block_Fill_Paint/releases">Bud's Painting Pack</a>
+      <a href="https://mcpedl.com/structure-block-export-button-for-mcpe/">Block Export Button (Android)</a>
+      <a href="https://structuralab.com/calculators.html">Calculators</a>
+    </div>
+  </div>
+</div>  
+  <div class="main show uploadForm1" id="homeText">
+	<h3 class="LoginForm__title">Chunk Borders</h3>
+	<div class="Control">
+		    <label >X</label>
+		    <input type="number" id="borderX"/>
+		    <label >Z</label>
+		    <input type="number" id="borderZ"/>
+	</div>
+	<table>
+		<tr>
+			<th>Corner</th>
+			<th>X (EW)</th>
+			<th>Z (NS)</th>
+		</tr>
+		<tr>
+			<th>North West</th>
+			<th id="borderx1"></th>
+			<th id="borderz1"></th>
+		</tr>
+		<tr>
+			<th>South East</th>
+			<th id="borderx2"></th>
+			<th id="borderz2"></th>
+		</tr>
+	</table>
+	<h3 class="LoginForm__title">Guardian Spawn Spots</h3>
+	<label >Center Location</label>
+	<div class="Control">
+		    <label >X</label>
+		    <input type="number" id="guardianX"/>
+		    <label >Z</label>
+		    <input type="number" id="guardianZ"/>
+	</div>
+	<table>
+		<tr>
+			<th>Location</th>
+			<th>X</th>
+			<th>Z</th>
+		</tr>
+		<tr>
+			<th>spot 1</th>
+			<th id="guardianx1-1"></th>
+			<th id="guardianz1-1"></th>
+		</tr>
+		<tr>
+			<th>spot 2</th>
+			<th id="guardianx2-1"></th>
+			<th id="guardianz2-1"></th>
+		</tr>
+		<tr>
+			<th>spot 3</th>
+			<th id="guardianx3-1"></th>
+			<th id="guardianz3-1"></th>
+		</tr>
+		<tr>
+			<th>spot 4</th>
+			<th id="guardianx4-1"></th>
+			<th id="guardianz4-1"></th>
+		</tr>
+		<tr>
+			<th>spot 5</th>
+			<th id="guardianx5-1"></th>
+			<th id="guardianz5-1"></th>
+		</tr>
+		<tr>
+			<th>spot 6</th>
+			<th id="guardianx1-2"></th>
+			<th id="guardianz1-2"></th>
+		</tr>
+		<tr>
+			<th>spot 7</th>
+			<th id="guardianx2-2"></th>
+			<th id="guardianz2-2"></th>
+		</tr>
+		<tr>
+			<th>spot 8</th>
+			<th id="guardianx3-2"></th>
+			<th id="guardianz3-2"></th>
+		</tr>
+		<tr>
+			<th>spot 9</th>
+			<th id="guardianx4-2"></th>
+			<th id="guardianz4-2"></th>
+		</tr>
+		<tr>
+			<th>spot 10</th>
+			<th id="guardianx5-2"></th>
+			<th id="guardianz5-2"></th>
+		</tr>
+		<tr>
+			<th>spot 11</th>
+			<th id="guardianx1-3"></th>
+			<th id="guardianz1-3"></th>
+		</tr>
+		<tr>
+			<th>spot 12</th>
+			<th id="guardianx2-3"></th>
+			<th id="guardianz2-3"></th>
+		</tr>
+		<tr>
+			<th>spot 13</th>
+			<th id="guardianx3-3"></th>
+			<th id="guardianz3-3"></th>
+		</tr>
+		<tr>
+			<th>spot 14</th>
+			<th id="guardianx4-3"></th>
+			<th id="guardianz4-3"></th>
+		</tr>
+		<tr>
+			<th>spot 15</th>
+			<th id="guardianx5-3"></th>
+			<th id="guardianz5-3"></th>
+		</tr>
+		<tr>
+			<th>spot 16</th>
+			<th id="guardianx1-4"></th>
+			<th id="guardianz1-4"></th>
+		</tr>
+		<tr>
+			<th>spot 17</th>
+			<th id="guardianx2-4"></th>
+			<th id="guardianz2-4"></th>
+		</tr>
+		<tr>
+			<th>spot 18</th>
+			<th id="guardianx3-4"></th>
+			<th id="guardianz3-4"></th>
+		</tr>
+		<tr>
+			<th>spot 19</th>
+			<th id="guardianx4-4"></th>
+			<th id="guardianz4-4"></th>
+		</tr>
+		<tr>
+			<th>spot 20</th>
+			<th id="guardianx5-4"></th>
+			<th id="guardianz5-4"></th>
+		</tr>
+		<tr>
+			<th>spot 21</th>
+			<th id="guardianx1-5"></th>
+			<th id="guardianz1-5"></th>
+		</tr>
+		<tr>
+			<th>spot 22</th>
+			<th id="guardianx2-5"></th>
+			<th id="guardianz2-5"></th>
+		</tr>
+		<tr>
+			<th>spot 23</th>
+			<th id="guardianx3-5"></th>
+			<th id="guardianz3-5"></th>
+		</tr>
+		<tr>
+			<th>spot 24</th>
+			<th id="guardianx4-5"></th>
+			<th id="guardianz4-5"></th>
+		</tr>
+		<tr>
+			<th>spot 25</th>
+			<th id="guardianx5-5"></th>
+			<th id="guardianz5-5"></th>
+		</tr>
+	</table>
+  </div>
+</div>
+<div class="footer">
+	<div class="copyright">© MadHatter USA, All Rights Reserved</div>
+	<a href="#TOS" class="tos">Terms of Service</a>
+</div>
+</body>
+<script src="heading.js"></script>
+<script src="calculators.js"></script>
+</html>

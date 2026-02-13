@@ -6,13 +6,13 @@
   font-family: minecraftNormal;
   src: url(Minecraft-Regular.woff);/* https://blogfonts.com/minecraft-1.font*/
 }
-pre{
-    white-space: pre-wrap;       /* Since CSS 2.1 */
-    white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
-    white-space: -pre-wrap;      /* Opera 4-6 */
-    white-space: -o-pre-wrap;    /* Opera 7 */
-    word-wrap: break-word;       /* Internet Explorer 5.5+ */
+th, td {
+  text-align: left;
+  padding-right:30px;
+  padding-left:30px;
+  
 }
+
 :root {
   --headder-color: #333;
   --header-text: #f2f2f2;
@@ -23,6 +23,19 @@ pre{
   --middle-nav-background: #17202A;
   --mid-header-text: white;
   --border-color:#333;
+}
+table { border-collapse:collapse }
+tr:nth-child(even) {background-color: #f2f2f2;}
+tr:nth-child(1) {
+	background-color: var(--headder-color);
+	color: var(--header-text);
+	}
+pre{
+    white-space: pre-wrap;       /* Since CSS 2.1 */
+    white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+    white-space: -pre-wrap;      /* Opera 4-6 */
+    white-space: -o-pre-wrap;    /* Opera 7 */
+    word-wrap: break-word;       /* Internet Explorer 5.5+ */
 }
 h1{
 	font-family: minecraftBold;
@@ -277,7 +290,12 @@ background-color: #ddd;
   background-color: var(--headder-cover);
   padding: 10px;
 }
-
+.grid-more {
+  display: flex;
+  justify-content: center; /* Centers content horizontally */
+  align-items: center;     /* Centers content vertically */
+  height: 50px;           /* Example height - adjust as needed */
+}
 .grid-container > div {
   background-color: rgba(255, 255, 255, 0.8);
   justify-content: center;

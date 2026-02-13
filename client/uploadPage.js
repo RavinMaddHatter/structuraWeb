@@ -85,13 +85,16 @@ function loadUserProfilePage(){
 	getToken(fetchProfile)
 }
 function uploadButton(){
-	if(cognitoUser){
+	if(cognitoUser!=null){
 		window.location.href = 'https://structuralab.com/upload.html';
 		return
 	}
 	window.location.href = "https://structuralab.com/login.html";
 }
 function uploadMcstructure(){
+	if(cognitoUser==null){
+		window.location.href = "https://structuralab.com/login.html";
+	}
 	window.location.hash = "#uploadInProgress"
 	let files = document.getElementById('fileUpload').files;
 	if(files){
