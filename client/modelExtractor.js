@@ -66,7 +66,6 @@ function uploadFile(headder){
 	document.getElementById("processingText").innerText="This may take some time."
 	pathStructure = headder.path
 	guid = headder.guid
-	console.log(headder)
 	postFile(fileUploadObject.Body,headder.url)
 }
 function getSignedS3Urls(callback,jwtoken){
@@ -89,17 +88,28 @@ function convertFile(jwtoken){
 	})
 	.then(response => response.json())
 	.then(response => {
-			clearForms()
-		//if("downloadLink" in response){
+		clearForms()
+		if(Object.hasOwn(response,"downloadLoc")){
 			console.log(response)
 			document.getElementById('downloadLink').href = response.downloadLoc
 			hideMain()
 			document.getElementById('download').classList.add('show')
 			document.getElementById('download').classList.remove('hide')
-		//}else{
-		//	document.getElementById('fail').classList.add('show')
-		//	document.getElementById('fail').classList.remove('hide')
-		//}
+			let area = document.getElementById('downloadsArea')
+			for (const linkPath of response.rawFiles) {
+				let downDiv = document.createElement("div");
+				let newLink = document.createElement("a");
+				//profileName.classList.add("");
+				newLink.href = linkPath
+				newLink.innerText = linkPath.split('/').pop();
+				downDiv.appendChild(newLink);
+				area.appendChild(downDiv);
+			}
+			
+		}else{
+			document.getElementById('fail').classList.add('show')
+			document.getElementById('fail').classList.remove('hide')
+		}
 	})
 }
 //helpers

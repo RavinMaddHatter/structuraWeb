@@ -24,11 +24,10 @@ def make_image(image_path,pallete,export_name):
     data=np.zeros((128,128),dtype=int)
     for x in range(128):
         for y in range(128):
-            
             color = new_img[x][y][:3]
             selected_color = tuple(closest(colors,color)[0])
             color_id = f"{selected_color[0]},{selected_color[1]},{selected_color[2]}"
-            block=pallete[color_id][0]
+            block=pallete[color_id]
             if not (block in block_pallet):
                 block_pallet.append(block)
             data[y][x]=block_pallet.index(block)
@@ -48,12 +47,12 @@ def make_image(image_path,pallete,export_name):
         blockItem["name"] = String(block_pallet[i])
         ListBlocks.append(blockItem)
     template["structure"]["palette"]["default"]["block_palette"]=List[Compound](ListBlocks)
-    template.save("{export_name}.mcstructure")
+    template.save(f"{export_name}.mcstructure")
     
     return data
-if __name__ =="__main__"
+if __name__ =="__main__":
     with open('blockLookups.json', 'r') as f:
         colors_lookup = json.load(f)
-    data = make_image('AAlogo.png',colors_lookup,"AA")
+    data = make_image('Hatter_Love_white_bg.png',colors_lookup,"hatterlove")
 
 

@@ -267,7 +267,7 @@ function fetchProfile(jwtoken){
 	})
 	.then(response => response.json())
 	.then(response => {
-		document.getElementById("userProfileIcon").src = "https://s3.us-east-2.amazonaws.com/structuralab.com/Profiles/"+credentials.user.username+"/profilePic.png"
+		document.getElementById("userProfileIcon").src = "https://structuralab.com/Profiles/"+credentials.user.username+"/profilePic.png"
 		document.getElementById("userProfileYoutubeInput").value = response["profile"]["Youtube"];
 		document.getElementById("userProfileDiscordInput").value = response["profile"]["Discord"];
 		document.getElementById("userProfilePatreonInput").value = response["profile"]["Paetron"];
@@ -298,7 +298,7 @@ function fixIconSize(jwtoken){
 	})
 	.then(response => response.json())
 	.then(response => {
-		document.getElementById("userProfileIcon").src = "https://s3.us-east-2.amazonaws.com/structuralab.com/Profiles/"+credentials.user.username+"/profilePic.png?t=" + new Date().getTime();
+		document.getElementById("userProfileIcon").src = "https://structuralab.com/Profiles/"+credentials.user.username+"/profilePic.png?t=" + new Date().getTime();
 	})
 	
 }

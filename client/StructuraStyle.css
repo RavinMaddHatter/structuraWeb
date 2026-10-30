@@ -129,6 +129,10 @@ body {
 	margin:0;
 	padding:0px;
 }
+.likelink{	
+	display: block;
+	padding: 5px;
+}
 .itemImgContainer{	
 	display: block;
 	padding: 5px;
@@ -138,6 +142,18 @@ body {
 	height: 225px;
 	width:  225px;
 	object-fit: cover;
+}
+.splitRight{
+	display: table-cell;
+    width: 50%;
+}
+.splitLeft{
+	display: table-cell;
+    width: 50%;
+}
+.profileArea{
+	display: table;
+    width: 90%;
 }
 /* Style the top navigation bar */
 .topnav {

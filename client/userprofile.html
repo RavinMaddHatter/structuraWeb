@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3005750757891844" crossorigin="anonymous"></script>
+<link rel="icon" type="image/png" href="/favicon.png"/>
+<title id="metaTitle">Structura Lab: Profile</title>
+<meta name="description" id="metaDescription" content="Edit your profile"></meta>
+<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3005750757891844"
+     crossorigin="anonymous"></script> -->
+<script src="https://structuralab.com/aws-cognito-sdk.min.js"></script>
+<script src="https://structuralab.com/amazon-cognito-identity.min.js"></script>
+<script src="https://sdk.amazonaws.com/js/aws-sdk-2.1.24.min.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel = "stylesheet" href="StructuraStyle.css">
+</head>
+<body>
+<div class="topnav">
+  <h2>Structura Lab</h2>
+  <div class="headLinks show" id="loginLink">
+    <a href="https://structuralab.com/login.html" rel="nofolow">Login</a>
+  </div>
+  <div class="headLinks hide" id="profLink">
+    <a href="#userprofile" rel="nofolow">Profile</a>
+  </div>
+  <div class="headLinks hide" id="signOutButton">
+    <a href="#signout" rel="nofolow">Sign Out</a>
+  </div>
+  <p>Your place for discovering what is possible in Minecraft Bedrock </p>
+
+</div>
+<script async src="https://cse.google.com/cse.js?cx=b54f54fe8e4a54348">
+</script>
+<div class="gcse-search"></div>
+<div class="content">
+<div class="middlenav">
+  <div class="dropdown">
+	<button onclick="goHome()" class="dropbtn">Home</button>
+  </div>
+  <div class="dropdown">
+  <button onclick="clickFilter()" class="dropbtn">Category</button>
+    <div id="filter" class="dropdown-content">
+      <a href="https://structuralab.com/Farms.html">Farms</a>
+      <a href="https://structuralab.com/Buildings.html">Buildings</a>
+      <a href="https://structuralab.com/Terrain.html">Terrain</a>
+      <a href="https://structuralab.com/Villager.html">Villager</a>
+      <a href="https://structuralab.com/Storage.html">Storage</a>
+      <a href="https://structuralab.com/Flying.html">Flying Machines</a>
+      <a href="https://structuralab.com/Furnaces.html">Furnaces</a>
+      <a href="https://structuralab.com/Redstone.html">Redstone</a>
+      <a href="https://structuralab.com/Statues.html">Statues</a>
+      <a href="https://structuralab.com/Misc.html">Misc</a>
+    </div>
+  </div>
+  <div class="dropdown">
+  <button onclick="clickSort()" class="dropbtn">Sort By</button>
+    <div id="sort" class="dropdown-content">
+      <button onclick="sortGrid('rank')">Ranking</button>
+      <button onclick="sortGrid('newest')">newest</button>
+      <button onclick="sortGrid('oldest')">oldest</button>
+      <button onclick="sortGrid('name')">Name</button>
+      <!--button onclick="sortGrid('')">Most Downloaded</a>
+      <button onclick="sortGrid(this)">Highest Rated</a-->
+      <button onclick="sortGrid('random')">Random</a>
+    </div>
+  </div>
+  <div class="dropdown">
+	<a href="https://structuralab.com/#upload" class="dropbtn">Upload</a>
+  </div>
+  <div class="dropdown">
+  <button onclick="clickTools()" class="dropbtn">Tools</button>
+    <div id="tools" class="dropdown-content">
+    </div>
+  </div>
+</div>
+  <div class="HeadText main hide" id="homeText">
+	<h2>Welcome!</h2>
+	<div class="headCenter">Structura Lab is a place to find, share, and make structura files. For a walk through on how this site works see the video below:</div>
+	<iframe class="youtubeSplash" id="youtubeSplash" src="https://www.youtube.com/embed/zFWi_NNvUf4"></iframe>
+	<div class="headCenter">Structura is Free and Open source, The structura Desktop app allows you more flexiblity than the web interface. For more information about Structura check out the following links:</div>
+	<div class="headCenter"><a href="https://github.com/RavinMaddHatter/Structura">Structura Git Hub</a></div>
+	<div class="headCenter"><a href="https://github.com/RavinMaddHatter/Structura/releases">Structura Desktop App</a></div>
+	<div class="headCenter"><a href="https://www.youtube.com/watch?v=HwkI8KhWGbs&list=PL0bqDM9nfA12TYSz2m6i8FDTOlWGxiz4d">Structura Youtube Playlist</a></div>
+
+  </div>
+
+<!-- User Profile -->
+  <div class="userProfile main hide" id="userProfile">
+	<div class = "profileArea" >
+		<span class = "splitLeft">
+			<div id="userProfileIconDiv">
+				<img id="userProfileIcon"></img>
+				<br></br>
+				<input type="file" id="uploadProfilePicture" accept=".png">
+				<div>NOTE: Updating your profile image may take up to 24 hours. A preview of the image will appear instantly, but several systems cache the old image for speed.</div>
+			</div>
+			<br></br>
+			<div id="userProfileYoutube">
+				<span>Youtube</span>
+				<input type="url" id="userProfileYoutubeInput" placeholder="Link to Youtube Channel"></input>
+				<p>Will show up when user clicks your profile.</p>
+			</div>
+			<div id="userProfileDiscord">
+				<span>Discord</span>
+				<input type="url" id="userProfileDiscordInput" placeholder="Discord Invite Link"></input>
+				<p>Will show up when user clicks your profile.</p>
+			</div>
+			<div id="userProfilePatreon">
+				<span>Patreon</span>
+				<input type="url" id="userProfilePatreonInput" placeholder="Link to Patreon Pange"></input>
+				<p>Will show up when user clicks your profile and will appear under "support this creator" for each structure</p>
+			</div>
+			<div id="userProfileKoFi">
+				<span>Ko-Fi</span>
+				<input type="url" id="userProfileKoFiInput" placeholder="Link to Ko-Fi Page"></input>
+				<p>Will show up when user clicks your profile and will appear under "support this creator" for each structure</p>
+			</div>
+			<div id="userProfileTwitch">
+				<span>Twitch</span>
+				<input type="url" id="userProfileTwitchInput" placeholder="Link to Twitch Channel"></input>
+				<p>Will show up when user clicks your profile.</p>
+			</div>
+		</span>
+		<span class = "splitRight">
+			<h4>Likes</h4>
+			<div id="likesArea"></div>
+		</span>
+	</div>
+	<div id="userProfileButtons">
+		<button onclick="saveUserProfile()">Save</button>
+		<button onclick="loadUserProfilePage()">Cancel</button>
+		<span>     </span>
+		<button onclick="confirmDeleteWindow()">DELETE ACCOUNT</button>
+	</div>
+  </div>
+  <div class="showProfile main hide" id="DeleteInProgress">
+	<h3>DELETE IN PROGRESS</h3>
+	<p>Account deletion in progress. Finding all posts, deleting all pages, all saved data</p>
+	<p>If this hangs, deletion may only partially finish. This is due to a bug, if that occures reach out to Maddhatter. It is unintentional</p>
+	<p>madhatter@mail.ravinmaddhatter.com</p>
+	<a href="https://www.youtube.com/@maddhatter"> on youtube</a>
+	<a href="https://discord.gg/6MtfmWcm85">Discord</a>
+	<p>I am most likely to see youtube comments or discord messages.</p>
+  </div>
+  <div class="showProfile main hide" id="DeleteCompleted">
+	<h3>DELETE Completed</h3>
+	<p>All data has been purged from our records.</p>
+	
+  </div>
+  <div class="showProfile main hide" id="DeleteConfirm">
+	<h3>DELETE ACCOUNT</h3>
+	<p>WARNING: you are about to delete your account and all associated data. This cannot be undone. All records and files will be purged immediately, no information or backups will be saved. This is perminent.</p>
+	<div>
+		<button onclick="loadUserProfilePage()">Return to Profile</button>
+		<button onclick="deleteAccount()">DELETE ACCOUNT</button>
+	</div>
+  </div>
+  <div class="showProfile main hide" id="noLogin">
+	<h3>Not logged in, login to view your profile</h3>
+  </div>
+<!-- Public Profile -->
+  <div class="showProfile main hide" id="Profile">
+	<div id="profileIconDiv" class="profileIcon">
+		<img id="profileIcon" onerror="noProfPic(this)"></img>
+	</div>
+	<h3 id="profileName"></h3>
+	<br></br>
+	<div>
+	  <div id="youtubeProfile">
+		<span>Youtube: </span>
+		<a  id="youtubeLink" rel="nofolow"></a>
+  	  </div>
+	  <div id="discordProfile">
+		<span>Discord: </span>
+		<a  id="discordLink" rel="nofolow"></a>
+	  </div>
+	  <div id="patreonProfile">
+		<span>Patreon: </span>
+		<a  id="patreonLink" rel="nofolow"></a>
+	  </div>
+	  <div id="kofiProfile">
+		<span>Ko-Fi: </span>
+		<a  id="kofiLink" rel="nofolow"></a>
+	  </div>
+	  <div id="twitchProfile">
+		<span>Twitch: </span>
+		<a  id="twitchLink" rel="nofolow"></a>
+	  </div>
+	</div>
+  </div>
+<!-- Display Grid -->
+<div class="grid-container main hide" id="grid"></div>
+<div class="gridmore main hide" id="grid_buttons">
+	<button onclick="loadMore()">Load More Entries</button>
+</div>
+<div class="footer">
+	<div class="copyright">© MadHatter USA, All Rights Reserved</div>
+	<a href="https://structuralab.com/TOS.html" class="tos">Terms of Service</a>
+</div>
+</body>
+<script src="utilities.js"></script>
+<script src="userprofile.js"></script>
+<script src="heading.js"></script>
+</html>

@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
+<script async src="https://cse.google.com/cse.js?cx=b54f54fe8e4a54348"></script>
 <head>
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3005750757891844" crossorigin="anonymous"></script>
+
 <link rel="icon" type="image/png" href="/favicon.png"/>
 <title id="metaTitle">Structura Lab: Home</title>
 <meta name="description" id="metaDescription" content="A place to share, create, and find Structura Files for Minecraft Bedrock Edition, Structura is a build templating tool similar to Litematica"></meta>
@@ -29,8 +31,6 @@
   <p>Your place for discovering what is possible in Minecraft Bedrock </p>
 
 </div>
-<script async src="https://cse.google.com/cse.js?cx=b54f54fe8e4a54348">
-</script>
 <div class="gcse-search"></div>
 <div class="content">
 <div class="middlenav">
@@ -51,7 +51,8 @@
       <a href="https://structuralab.com/Statues.html">Statues</a>
       <a href="https://structuralab.com/Misc.html">Misc</a>
     </div>
-  </div>
+	</div>
+
   <div class="dropdown">
   <button onclick="clickSort()" class="dropbtn">Sort By</button>
     <div id="sort" class="dropdown-content">
@@ -70,10 +71,6 @@
   <div class="dropdown">
   <button onclick="clickTools()" class="dropbtn">Tools</button>
     <div id="tools" class="dropdown-content">
-      <a href="https://structuralab.com/ModelToMinecraft.html">Model To  Minecraft</a>
-      <a href="https://github.com/bud-aj29/BE_Block_Fill_Paint/releases">Bud's Painting Pack</a>
-      <a href="https://mcpedl.com/structure-block-export-button-for-mcpe/">Block Export Button (Android)</a>
-      <a href="https://structuralab.com/calculators.html">Calculators</a>
     </div>
   </div>
 </div>
@@ -87,203 +84,24 @@
 	<div class="headCenter"><a href="https://www.youtube.com/watch?v=HwkI8KhWGbs&list=PL0bqDM9nfA12TYSz2m6i8FDTOlWGxiz4d">Structura Youtube Playlist</a></div>
 
   </div>
-  <div class="main hide" id="itemPage">
-	<div class="splash" id="splash">
-		<h1 id="itemName"></h1>
-		<div class="gallery" id="gallery">
-			<img class="itemImg hide" id="itemImg" onerror="noImage(this)">
-			<iframe class="itemyoutube hide" id="youtubeEmbed"></iframe>
-		</div>
-		<div class="brief" id="brief">
-			<h3>Creator</h3>
-			<a class="itemProfile" id="itemProfile"></a>
-			<h3>Date added</h3>
-			<div id="itemDate",class="itemDate"></div>
-			<h3>Structure files:</h3>
-			<div id="structureFileDiv">
-			</div>
-			<h3>Structura pack:</h3>
-			<a id="structurapack"></a>
-			<h3 id="nametageHead">Name Tags:</h3>
-			<div id="nametags"></div>
-		</div>
-		<div id="editPageButtonDiv" class = "hide">
-			<button id="editPageButton" onclick="editItemButton()">Edit Page</button>
-			<button id="deleteItem" onclick="delteItemButton()">Delete Page</button>
-	    </div>
-	</div>
-	<div class="detailsContainer" id="details">
-		<div class="details" id="descriptionBlock">
-			<h3>Description</h3>
-			<pre id="description"></pre>
-		</div>
-		<div class="details" id="listBlock">
-			<h3>Materials List</h3>
-			<div class="materialsGrid" id="materialsList">
-			</div>
-		</div>
-
-	</div>
-  </div>
-
-<!-- upload forms-->
-  <div class="uploadForm1 main hide" id="uploadStep1">
-
-	<h3 class="uploadStepTitle">Upload .mcstructure file/files</h3>
-	<div>
-      <input type="file" id="fileUpload" multiple accept=".mcstructure">  </input>
-    </div>
-	<div class="uploadExplanationStep">Please upload a .mcstructure file exported from minecraft bedrock edition. The file must contain data (a bug in minecraft/onedrive some times makes empty files)</div>
-	<div class="uploadExplanationStep">If more than 1 file is uploaded all files are converted and combined into 1 pack. The files are then selected using the nametag feature in minecraft.</div>
-	<div class="uploadExplanationStep">After uploading the files you will have the option to upload a thumbnail, give it a title, embed a youtube video, and give the pack a description</div>
-	<div class="uploadExplanationStep">The Structura files will be automatically generated and you will not have to input aditional information to complete your post.</div>
-	<div class="uploadExplanationStep">Exchanging the structure file is not currently supported, however files you own can be permanently deleted from the website  and re-posted.</div>
-    <div>
-      <button onclick="uploadMcstructure()">Submit</button>
-    </div>
-	<!--<progress max=”100” value=”0”></progress> -->
-  </div>
-  <!-- Edit Item -->
-  <div class="editItem main hide" id="uploadInProgress">
-	<div >
-		<h3 class="EditTitle">UPLOADING: </h3>
-	</div>
-	</div>
-
-  <!-- Edit Item -->
-  <div class="editItem main hide" id="editItem">
-	<div >
-		<h3 class="EditTitle">Title: </h3>
-		<input type="text" id="editTitle"> </input>
-	</div>
-    <div class="editThumnail">
-		<h4>Thumbnail:</h4>
-		<div class="gallery" id="gallery">
-			<img class="itemImg" id="editThumnail" onerror="noImage(this)" ></img>
-		</div>
-		<div class="rightGallery">
-			<div> <b>Thumbnail Image</b>: </div>
-			<input type="file" id="thumbnailUpload" accept=".png">
-			<div> <b>Youtube Link</b>(replaces thumbnails): </div>
-			<input type="text" class="linkEntry" id="setYoutubeLink"> </input>
-			<div class="uploadExplanationStep">The thumbnail will be what is displayed to users when they arrive at your post and when they are browsing the grid. If a youtube link is provided it will overwrite the images in both places.</div>
-		</div>
-
-	</div>
-	<div>
-		<h4>Category: </h4>
-		<div class="uploadExplanationStep">A category will enable people to browse for your file. A default category of MISC is assigned.</div>
-		<select id="editCategory">
-			<option value="Farms">Farms</option>
-			<option value="Buildings">Buildings</option>
-			<option value="Terrain">Terrain</option>
-			<option value="Villager">Villager Tech</option>
-			<option value="Storage">Storage</option>
-			<option value="Flying">Flying Machines</option>
-			<option value="Furnaces">Furnaces</option>
-			<option value="Redstone">Redstone</option>
-			<option value="Statues">Statues</option>
-			<option value="Misc">Misc</option>
-		</select>
-	</div>
-	<div>
-		<h4>Description: </h4>
-		<div class="uploadExplanationStep">The description will be used to explain how to use the file to your viewers. This section will also be indexed for searching the page</div>
-		<textarea id="editDescription" class="paragraphEntry" rows="5"></textarea>
-	</div>
-	<div>
-		<h4>Visiblity: </h4>
-		<div class="uploadExplanationStep">By default, files are private and only shown to you. if you wish to share these files publicly please enable "show to public"</div>
-		<b>Show to Public:</b><input type="checkbox" name="editVisibility" id="editVisibility"></input>
-	</div>
-	<div>
-		<button onclick="submitItemEdit()"> Submit </button>
-		<button id="deleteItem" onclick="delteItemButton()">Delete Page</button>
-	</div>
-  </div>
-
-
-<!-- User Profile -->
-  <div class="userProfile main hide" id="userProfile">
-	<div id="userProfileIconDiv">
-		<img id="userProfileIcon"></img>
-		<br></br>
-		<input type="file" id="uploadProfilePicture" accept=".png">
-		<div>NOTE: Updating your profile image may take up to 24 hours. A preview of the image will appear instantly, but several systems cache the old image for speed.</div>
-	</div>
-	<br></br>
-	<div id="userProfileYoutube">
-		<span>Youtube</span>
-		<input type="url" id="userProfileYoutubeInput" placeholder="Link to Youtube Channel"></input>
-		<p>Will show up when user clicks your profile.</p>
-	</div>
-	<div id="userProfileDiscord">
-		<span>Discord</span>
-		<input type="url" id="userProfileDiscordInput" placeholder="Discord Invite Link"></input>
-		<p>Will show up when user clicks your profile.</p>
-	</div>
-	<div id="userProfilePatreon">
-		<span>Patreon</span>
-		<input type="url" id="userProfilePatreonInput" placeholder="Link to Patreon Pange"></input>
-		<p>Will show up when user clicks your profile and will appear under "support this creator" for each structure</p>
-	</div>
-	<div id="userProfileKoFi">
-		<span>Ko-Fi</span>
-		<input type="url" id="userProfileKoFiInput" placeholder="Link to Ko-Fi Page"></input>
-		<p>Will show up when user clicks your profile and will appear under "support this creator" for each structure</p>
-	</div>
-	<div id="userProfileTwitch">
-		<span>Twitch</span>
-		<input type="url" id="userProfileTwitchInput" placeholder="Link to Twitch Channel"></input>
-		<p>Will show up when user clicks your profile.</p>
-	</div>
-	<div id="userProfileButtons">
-		<button onclick="saveUserProfile()">Save</button>
-		<button onclick="loadUserProfilePage()">Cancel</button>
-	</div>
-  </div>
-<!-- Public Profile -->
-  <div class="showProfile main hide" id="Profile">
-	<div id="profileIconDiv" class="profileIcon">
-		<img id="profileIcon" onerror="noProfPic(this)"></img>
-	</div>
-	<h3 id="profileName"></h3>
-	<br></br>
-	<div>
-	  <div id="youtubeProfile">
-		<span>Youtube: </span>
-		<a  id="youtubeLink" rel="nofolow"></a>
-  	  </div>
-	  <div id="discordProfile">
-		<span>Discord: </span>
-		<a  id="discordLink" rel="nofolow"></a>
-	  </div>
-	  <div id="patreonProfile">
-		<span>Patreon: </span>
-		<a  id="patreonLink" rel="nofolow"></a>
-	  </div>
-	  <div id="kofiProfile">
-		<span>Ko-Fi: </span>
-		<a  id="kofiLink" rel="nofolow"></a>
-	  </div>
-	  <div id="twitchProfile">
-		<span>Twitch: </span>
-		<a  id="twitchLink" rel="nofolow"></a>
-	  </div>
-	</div>
-  </div>
 
 
 <!-- Display Grid -->
-<div class="grid-container main hide" id="grid"></div>
-<div class="grid-more main hide" id="grid">
-	<button onclick="loadMore()">Load More Entries</button>
-</div>
-<div class="footer">
-	<div class="copyright">© MadHatter USA, All Rights Reserved</div>
-	<a href="https://structuralab.com/TOS.html" class="tos">Terms of Service</a>
-</div>
+	<div class="grid-container main hide" id="grid">
+	</div>
+	<div class="grid-more main hide" id="grid-more">
+		<button onclick="loadMore()">Load More Entries</button>
+	</div>
+	<div class="footer">
+	
+		<div class="copyright">© MadHatter USA, All Rights Reserved</div>
+		<a href="https://structuralab.com/TOS.html" class="tos">Terms of Service</a>
+		<script src="heading.js"></script>
+		<script src="utilities.js"></script>
+		<script src="StructuraBasicScripts.js"></script>
+		<script src="index.js"></script>
+	</div>
+	
 </body>
-<script src="StructuraBasicScripts.js"></script>
-<script src="heading.js"></script>
+
 </html>
